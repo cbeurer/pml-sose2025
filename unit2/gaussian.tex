@@ -1,0 +1,358 @@
+\documentclass[a4paper]{article}
+\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage{blindtext} % Package to generate dummy text
+\usepackage{charter} % Use the Charter font
+\usepackage[utf8]{inputenc} % Use UTF-8 encoding
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage{amsthm, amsmath, amssymb} % Mathematical typesetting
+\usepackage{float} % Improved interface for floating objects
+\usepackage{hyperref} % For hyperlinks in the PDF
+\usepackage{graphicx, multicol} % Enhanced support for graphics
+\usepackage{xcolor} % Driver-independent color extensions
+\usepackage{pseudocode} % Environment for specifying algorithms in a natural way
+\usepackage{datetime} % Uses YEAR-MONTH-DAY format for dates
+
+\addtolength{\hoffset}{-2.25cm}
+\addtolength{\textwidth}{4.5cm}
+\addtolength{\voffset}{-3.25cm}
+\addtolength{\textheight}{5cm}
+
+\setlength{\parskip}{1ex}
+\setlength{\parindent}{0in}
+
+\DeclareUnicodeCharacter{03B1}{$\alpha$}
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{}\renewcommand{\headrulewidth}{0pt} % Blank out the default header
+\fancyfoot[L]{} % Custom footer text
+\fancyfoot[C]{} % Custom footer text
+\fancyfoot[R]{\thepage} % Custom footer text
+\newtheorem{thm}{Theorem}
+\newtheorem{cor}{Corollary}
+
+% define new commands
+\newcommand{\Real}{{\mathbb R}}
+\newcommand{\Normal}[3]{{\mathcal N} \left({#1};{#2},{#3}\right)}
+\newcommand{\Gauss}[3]{{\mathcal G} \left({#1};{#2},{#3}\right)}
+\newcommand{\NormalStandard}[1]{{\mathcal N} \left({#1}\right)}
+\newcommand{\GaussStandard}[1]{{\mathcal G} \left({#1}\right)}
+\newcommand{\NormalCDF}[3]{\Phi \left({#1};{#2},{#3}\right)}
+\newcommand{\NormalStandardCDF}[1]{\Phi \left({#1}\right)}
+\newcommand{\Bernoulli}[2]{{\mathrm{Ber}} \left({#1};{#2}\right)}
+\newcommand{\Ber}[2]{{\mathcal B} \left({#1};{#2}\right)}
+\newcommand{\expect}[1]{{\mathbb E \left[ {#1} \right]}}
+\newcommand{\var}[1]{{\mathbb V \left[ {#1} \right]}}
+\newcommand{\dirac}[1]{{\delta \left( {#1} \right)}}
+\newcommand{\uniform}[1]{{\mathcal U} \left( {#1} \right)}
+\newcommand{\identity}[1]{{{\mathbb{I}} \left( {#1} \right)}}
+\newcommand{\incoming}[1]{\widecheck{#1}}
+\newcommand{\outgoing}[1]{\widehat{#1}}
+\newcommand{\intd}[1]{\ \mathrm{d}{#1}}
+% \newcommand{\incoming}[1]{\stackrel{\rightarrow}{#1}}
+% \newcommand{\outgoing}[1]{\stackrel{\leftarrow}{#1}}
+\newcommand{\neighbours}[1]{{\mathrm{ne} \left( {#1} \right)}}
+
+
+% define new environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%-------------------------------
+%	TITLE SECTION (do not modify unless you really need to)
+%-------------------------------
+\fancyhead[C]{}
+\hrule \medskip
+\begin{minipage}{0.295\textwidth}
+    \raggedright
+    \hfill\\
+    % \footnotesize
+    % Start: 24.4.2023\\
+    % Return: 19.5.2023 \hfill\\
+    % \href{https://classroom.github.com/classrooms/124387260-hpi-artificial-intelligence-teaching-pml-classroom}{https://classroom.github.com}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+    \centering
+    \large
+    Properties of Gaussian Distributions\\
+\end{minipage}
+\begin{minipage}{0.295\textwidth}
+    \raggedleft
+    \hfill\\
+\end{minipage}
+\medskip\hrule
+\bigskip
+ 
+\section*{Representations}
+The distribution that we will most commonly use is the one-dimensional Gaussian distribution.
+\begin{definition}[One-Dimensional Gaussian Distribution]
+    Given parameters $\mu \in \Real$, $\sigma \in \Real^+$, $\tau \in \Real$, and $\rho \in \Real^+$, a one-dimensional random variable $X \in \Real$ is distributed according to a one-dimensional Gaussian distribution if the density has the form $\Normal{\cdot}{\mu}{\sigma^2}$ or $\Gauss{\cdot}{\tau}{\rho}$ with
+    \begin{align}
+        \Normal{x}{\mu}{\sigma^2} & := \frac{1}{\sqrt{2\pi}\cdot \sigma} \cdot \exp \left( -\frac{(x-\mu)^2}{2\sigma^2}\right) \,, \label{eq:Normal_definition} \\
+        \Gauss{x}{\tau}{\rho}     & := \sqrt{\frac{\rho}{2\pi}} \cdot \exp\left(-\frac{\tau^2}{2\rho} \right) \cdot \exp \left(\tau\cdot x - \rho \cdot \frac{x^2}{2} \right) \,. \label{eq:Gauss_definition}
+    \end{align}
+    If $\mu = \tau = 0$ and $\sigma^2 = \rho = 1$ we simply write 
+    \begin{align}
+        \NormalStandard{x} & := \Normal{x}{0}{1} \,, \\
+        \GaussStandard{x}  & := \Gauss{x}{0}{1} \,.
+    \end{align}
+\end{definition}
+Note that both definitions are identical when using the identities
+\begin{align}
+    \tau & = \frac{\mu}{\sigma^2} & \mbox{and} &  & \rho     & = \sigma^{-2}\,,                                       &  &  & \mbox{or} \\
+    \mu  & = \frac{\tau}{\rho}    & \mbox{and} &  & \sigma^2 & = \rho^{-1} \,. \label{eq:Gauss_Normal_transformation}
+\end{align}
+Also note that if $X \sim \Normal{\cdot}{\mu}{\sigma^2}$ we know that $\expect{X}=\mu$, $\expect{X^2}=\mu^2 + \sigma^2$, and $\var{X}=\sigma^2$.
+
+The following lemma will be useful for later proofs about the multiplication and division of Gaussian distributions.
+\begin{lemma}[Gaussian Density Transformation Lemma] \label{lem:gaussian_density_transformation}
+    Given parameters $\mu \in \Real$, $\sigma \in \Real^+$, and $a \not= 0$ we have
+    \begin{align}
+        \Normal{ax}{\mu}{\sigma^2} & = \frac{1}{|a|}\cdot\Normal{x}{\frac{\mu}{a}}{\frac{\sigma^2}{a^2}}\,.
+    \end{align}
+\end{lemma}
+\begin{proof}
+    Using \eqref{eq:Normal_definition} we see that
+    \begin{align*}
+        \Normal{ax}{\mu}{\sigma^2} 
+        & = \frac{1}{\sqrt{2\pi}\cdot \sigma} \cdot \exp\left( -\frac{1}{2} \cdot \frac{\left( ax - \mu \right)^2}{\sigma^2} \right) \\
+        & = \frac{1}{\sqrt{2\pi}\cdot \sigma} \cdot \frac{|a|}{|a|} \cdot \exp\left( -\frac{1}{2} \cdot \frac{\left( a\left(x - a^{-1}\mu \right) \right)^2}{\sigma^2} \right) \\
+        & = \frac{1}{|a|} \cdot \frac{1}{\sqrt{2\pi}\cdot \left( |a|^{-1} \cdot \sigma \right)} \cdot \exp\left( -\frac{1}{2} \cdot \frac{\left( x - a^{-1}\mu \right)^2}{\left( a^{-1}\cdot \sigma \right)^2} \right) \\
+        & = \frac{1}{|a|}\cdot\Normal{x}{\frac{\mu}{a}}{\frac{\sigma^2}{a^2}}\,.
+    \end{align*}
+\end{proof}
+
+\section*{Multiplication}
+A central theorem that allows us to derive many of our efficient factor update equations is the one-dimensional Gaussian multiplication theorem (see Figure \ref{fig:gaussian_multiplication_division} (left) for an example).
+\begin{theorem}[Gaussian Multiplication Theorem] \label{thm:gaussian_multiplication}
+    Given two Gaussian densities $\Gauss{\cdot}{\tau_1}{\rho_1}$ and $\Gauss{\cdot}{\tau_2}{\rho_2}$ we have
+    \begin{align}
+        \Gauss{x}{\tau_1}{\rho_1} \cdot \Gauss{x}{\tau_2}{\rho_2} & = \Gauss{x}{\tau_1 + \tau_2}{\rho_1 + \rho_2} \cdot \Normal{\mu_1}{\mu_2}{\sigma_1^2 + \sigma_2^2}\,.
+    \end{align}
+\end{theorem}
+Thus, when multiplying two Gaussian densities, we obtain a non-normalized Gaussian with the precision-mean $\tau$ as the sum of the precision-means of the two factors and the precision $\rho$ as the sum of the precisions of the two factors. The normalization constant is the density value at $0$ when subtracting both means and summing both variances of the factors. 
+
+\begin{proof}\label{prf:gaussian_multiplication_theorem}
+    In order to prove this theorem, we show that
+    \begin{align}
+        \frac{\Gauss{x}{\tau_1}{\rho_1} \cdot \Gauss{x}{\tau_2}{\rho_2}}{\Gauss{x}{\tau_1 + \tau_2}{\rho_1 + \rho_2}} & =  \Normal{\mu_1}{\mu_2}{\sigma_1^2 + \sigma_2^2}\,. \label{eq:mult_step1}
+    \end{align}
+    Using \eqref{eq:Gauss_definition}, we see that the left-hand side of \eqref{eq:mult_step1} equals
+    \begin{align}
+        \sqrt{\frac{\rho_1\rho_2}{2\pi\cdot\left(\rho_1 + \rho_2\right)}} \cdot \exp \left( -\frac{1}{2} \cdot \left[ \frac{\tau_1^2}{\rho_1} + \frac{\tau_2^2}{\rho_2} - \frac{\left( \tau_1 + \tau_2 \right)^2}{\rho_1 +\rho_2} \right] \right) .  \label{eq:mult_step2}
+    \end{align}
+    At the same time, using \eqref{eq:Normal_definition}, we see that the right-hand side of \eqref{eq:mult_step1} equals
+    \begin{align}
+        \sqrt{\frac{1}{2\pi \cdot \left( \sigma_1^2 + \sigma_2^2 \right)}} \cdot \exp \left( -\frac{1}{2}\cdot\frac{\left( \mu_1-\mu_2 \right)^2}{\sigma_1^2 + \sigma_2^2}\right) . \label{eq:mult_step3}
+    \end{align}
+    It remains to show that \eqref{eq:mult_step2} equals \eqref{eq:mult_step3} using the identities \eqref{eq:Gauss_Normal_transformation}. First, notice that
+    \begin{align*}
+        \sigma_1^2 + \sigma_2^2 & = \rho_1^{-1} + \rho_2^{-1} = \rho_1^{-1}\rho_2^{-1} \cdot \left(\rho_1 + \rho_2\right) = \frac{\rho_1 + \rho_2}{\rho_1\rho_2},
+    \end{align*}
+    which shows the equivalence of the square-root term of \eqref{eq:mult_step2} and \eqref{eq:mult_step3}. At the same time, we have 
+    \begin{align*}
+        \left( \mu_1-\mu_2 \right)^2 = \left( \tau_1\rho_1^{-1} - \tau_2\rho_2^{-1} \right)^2 = \left( \rho_1^{-1}\rho_2^{-1}\cdot \left( \tau_1\rho_2 - \tau_2\rho_1\right) \right)^2
+         & \Leftrightarrow \frac{\left( \mu_1-\mu_2 \right)^2}{\sigma_1^2 + \sigma_2^2} = \frac{\left( \tau_1\rho_2 - \tau_2\rho_1 \right)^2}{\rho_1\rho_2 \cdot \left(\rho_1 + \rho_2\right)}.
+    \end{align*}
+    To complete the proof, we see that
+    \begin{align*}
+        \frac{\tau_1^2}{\rho_1} + \frac{\tau_2^2}{\rho_2} - \frac{\left( \tau_1 + \tau_2 \right)^2}{\rho_1 +\rho_2} & = \frac{\tau_1^2\rho_2\cdot\left(\rho_1 + \rho_2\right) + \tau_2^2\rho_1 \cdot \left(\rho_1 + \rho_2\right) - \rho_1\rho_2\cdot\left( \tau_1 + \tau_2 \right)^2}{\rho_1\rho_2 \cdot \left(\rho_1 + \rho_2\right)} \\
+        & = \frac{\left( \tau_1\rho_2 \right)^2 + \left( \tau_2\rho_1 \right)^2 - 2\left( \tau_1\rho_2 \right) \left( \tau_2\rho_1 \right)}{\rho_1\rho_2 \cdot \left(\rho_1 + \rho_2\right)}                                \\
+        & = \frac{\left( \tau_1\rho_2 - \tau_2\rho_1 \right)^2}{\rho_1\rho_2 \cdot \left(\rho_1 + \rho_2\right)} \,,
+    \end{align*}
+    which shows the equivalence of the exponential term of \eqref{eq:mult_step2} and \eqref{eq:mult_step3}.
+\end{proof}
+
+
+\section*{Division}
+Using this result, it is easy to show the following division theorem (see Figure \ref{fig:gaussian_multiplication_division} (right) for an example).
+\begin{theorem}[Gaussian Division Theorem] \label{thm:gaussian_division}
+    Given two Gaussian densities $\Gauss{\cdot}{\tau_1}{\rho_1}$ and $\Gauss{\cdot}{\tau_2}{\rho_2}$ with $\rho_1 > \rho_2$
+    \begin{align}
+        \frac{\Gauss{x}{\tau_1}{\rho_1}}{\Gauss{x}{\tau_2}{\rho_2}} & = \frac{\Gauss{x}{\tau_1 - \tau_2}{\rho_1 - \rho_2}}{\Normal{\mu_1}{\mu_2}{\sigma_2^2 - \sigma_1^2}} \cdot \left( \frac{\sigma_2^2}{\sigma_2^2 - \sigma_1^2} \right) \,.
+    \end{align}
+\end{theorem}
+
+\begin{proof}\label{prf:gaussian_division_theorem}
+    In order to prove this theorem, we use Theorem \ref{thm:gaussian_multiplication} in the following form:
+    \begin{align*}
+        \Gauss{x}{\tau_3}{\rho_3} \cdot \Gauss{x}{\tau_2}{\rho_2} 
+        & = \Gauss{x}{\tau_3 + \tau_2}{\rho_3 + \rho_2} \cdot \Normal{\mu_3}{\mu_2}{\sigma_3^2 + \sigma_2^2}\,, \\
+        \frac{\Gauss{x}{\tau_3 + \tau_2}{\rho_3 + \rho_2}}{\Gauss{x}{\tau_2}{\rho_2}} 
+        & = \frac{\Gauss{x}{\tau_3}{\rho_3}}{\Normal{\mu_3}{\mu_2}{\sigma_3^2 + \sigma_2^2}} \,,
+    \end{align*}
+    where the second line follows by division with $\Gauss{x}{\tau_2}{\rho_2} \cdot \Normal{\mu_3}{\mu_2}{\sigma_3^2 + \sigma_2^2}$. All that is left is to set $\tau_1 = \tau_3 + \tau_2$ and $\rho_1 = \rho_3 + \rho_2$, substitute on the left side, and rewrite the right side in terms of $\mu_1, \mu_2, \sigma_1^2$, and $\sigma_2^2$. It is easy to see that $\tau_3 = \tau_1 - \tau_2$ and $\rho_3 = \rho_1 - \rho_2$. This implies that 
+    \begin{align*}
+        \sigma_3^2 + \sigma_2^2 
+        & = \frac{1}{\rho_3} + \sigma_2^2 = \frac{\sigma_1^2\cdot\sigma_2^2}{\sigma_2^2-\sigma_1^2} + \sigma_2^2 = \sigma_2^2 \cdot \frac{\sigma_2^2}{\sigma_2^2-\sigma_1^2} \,, \\
+        \mu_3 - \mu_2 
+        & = \frac{\tau_3}{\rho_3} - \mu_2 = \frac{\tau_1 - \tau_2}{\rho_1 - \rho_2} - \mu_2 
+        = \frac{\mu_1\sigma_2^2-\mu_2\sigma_1^2}{\sigma_2^2 - \sigma_1^2} - \mu_2 = \left( \mu_1 - \mu_2 \right) \cdot \frac{\sigma_2^2}{\sigma_2^2 - \sigma_1^2}\,.
+    \end{align*}
+    Thus, $\Normal{\mu_3}{\mu_2}{\sigma_3^2 + \sigma_2^2} = \Normal{\mu_3 - \mu_2}{0}{\sigma_3^2 + \sigma_2^2}$ is equivalent to 
+    \begin{align*}
+        \Normal{\left( \mu_1 - \mu_2 \right) \cdot \frac{\sigma_2^2}{\sigma_2^2 - \sigma_1^2}}{0}{\sigma_2^2 \cdot \frac{\sigma_2^2}{\sigma_2^2-\sigma_1^2}} 
+        & = \Normal{\mu_1}{\mu_2}{\sigma_2^2 - \sigma_1^2} \cdot \frac{\sigma_2^2 - \sigma_1^2}{\sigma_2^2} \,,
+    \end{align*}
+    where the final step follows from the application of Lemma \ref{lem:gaussian_density_transformation}.
+\end{proof}
+
+\begin{figure}
+    \begin{tabular}{cc}
+        \includegraphics*[width = 0.45\textwidth]{test_multiply} & 
+        \includegraphics*[width = 0.45\textwidth]{test_division} \\
+    \end{tabular}
+    \caption{\label{fig:gaussian_multiplication_division} {\bf (Left)} Demonstration of the Gaussian multiplication theorem with $\Normal{\cdot}{0}{1}$ (blue line) and $\Normal{\cdot}{2}{\frac{3}{2}}$ (red line). The point-wise product of these two densities is shown as the green line. After re-normalization to unit measure, this changes to $\Normal{\cdot}{\frac{4}{5}}{\frac{3}{5}}$ (dashed green line). Further multiplying the normalization $\Normal{0}{2}{\frac{5}{2}}$ gives the same density as the point-wise product (black dashed line). {\bf (Right)} Demonstration of the Gaussian division theorem with $\Normal{\cdot}{0}{1}$ (blue line) and $\Normal{\cdot}{1}{3}$ (red line). The point-wise division of these two densities is shown as the green line. After re-normalization to unit measure, this changes to $\Normal{\cdot}{-\frac{1}{2}}{\frac{3}{2}}$ (dashed green line). Further dividing by the normalization $\Normal{0}{1}{2}\cdot \frac{2}{3}$ gives the same density as the point-wise division (black dashed line).}
+\end{figure}
+
+\section*{Cumulative Distribution Function}
+An important quantity that we often use in relation to Gaussian densities is the cumulative distribution function (cdf) of the Gaussian density.
+\begin{definition}[Gaussian Cumulative Distribution Function] \label{def:gaussian_cdf}
+    Given parameters $\mu \in \Real$, $\sigma \in \Real^+$, the cumulative distribution function $\NormalCDF{\cdot}{\mu}{\sigma^2}$ of a Gaussian $\Normal{\cdot}{\mu}{\sigma^2}$ for any $t\in \Real$ is defined by
+    \begin{align}
+        \NormalCDF{t}{\mu}{\sigma^2} & := \int_{-\infty}^t \Normal{x}{\mu}{\sigma^2}\intd{x} \,, \\
+        \NormalStandardCDF{t}        & := \NormalCDF{t}{0}{1} \,.
+    \end{align}
+\end{definition}
+
+Due to the symmetry of the Gaussian density around $\mu$, the cumulative distribution function has some nice properties.
+\begin{theorem}[Gaussian Cumulative Distribution Function] \label{thm:properties_of_Gaussian_CDF}
+    Given parameters $\mu \in \Real$, $\sigma \in \Real^+$, we have for any $t\in \Real$
+    \begin{align}
+        \NormalCDF{t}{\mu}{\sigma^2} & = \NormalStandardCDF{\frac{t-\mu}{\sigma}} \,, \\
+        \NormalStandardCDF{t}        & = 1-\NormalStandardCDF{-t} \,.
+    \end{align}
+\end{theorem}
+
+\begin{proof}\label{prf:properties_of_Gaussian_CDF}
+    Using Definition \ref{def:gaussian_cdf} for the standard Gaussian density $f(x) = \Normal{x}{0}{1}$ and the transformation $g(x) = \frac{x - \mu}{\sigma}$ with $\frac{\intd{g(x)}}{\intd{x}} = \frac{1}{\sigma}$ we can use the integral substitution rule
+    \begin{align*}
+        \int_a^b f(g(x)) \cdot \frac{\intd{g(x)}}{\intd{x}}\intd{x} & = \int_{g(b)}^{g(a)} f(u)\intd{u}
+    \end{align*}
+    to show that
+    \begin{align*}
+        \NormalCDF{t}{\mu}{\sigma^2} 
+        & = \int_{-\infty}^t \frac{1}{\sqrt{2\pi}} \exp\left( -\frac{\left( x - \mu \right)^2}{2\sigma^2} \right) \cdot \frac{1}{\sigma} \intd{x} \\
+        & = \int_{-\infty}^{\frac{t-\mu}{\sigma}} \frac{1}{\sqrt{2\pi}} \exp\left( -\frac{u^2}{2} \right)\intd{u} \\
+        & = \NormalStandardCDF{\frac{t-\mu}{\sigma}} \,.
+    \end{align*}
+    The second result follows from the symmetry of $\Normal{\cdot}{0}{1}$ around $0$, that is, $\Normal{x}{0}{1} = \Normal{-x}{0}{1}$. Then
+    \begin{align*}
+        \NormalStandardCDF{t} 
+        & = \int_{-\infty}^{t} \Normal{x}{0}{1}\intd{x} \\
+        & = \int_{-\infty}^{+\infty} \Normal{x}{0}{1}\intd{x} - \int_{t}^{+\infty} \Normal{x}{0}{1}\intd{x} \\
+        & = 1 - \int_{-\infty}^{-t} \Normal{x}{0}{1}\intd{x} \\
+        & = 1 - \NormalStandardCDF{-t} .
+    \end{align*}
+\end{proof}
+
+\section*{Limit Gaussian Distributions: Dirac Delta} 
+The limit case of $\sigma^2$ converging to zero and $\mu = 0$. The resulting function is called a Dirac delta and is formally defined as follows\footnote{Note that a $\mu \not= 0$ can be realized by subtracting it from the argument of $\dirac{\cdot}$ because $\Normal{x}{\mu}{\sigma^2} = \Normal{x - \mu}{0}{\sigma^2}$.}.
+\begin{definition}[Dirac Delta] \label{def:dirac}
+    The Dirac delta function $\dirac{\cdot}$ is a normalized function defined as zero everywhere except at $0$. Formally, it is defined by
+    \begin{align}
+        \dirac{x} & := \lim_{\sigma^2 \rightarrow 0} \Normal{x}{0}{\sigma^2} \,.
+    \end{align}
+\end{definition}
+A key property of the Dirac delta is that if a Gaussian density is convoluted with a Dirac delta, it returns the function value of the Gaussian density at zero.
+\begin{theorem}[Convolution of Normal with Dirac] \label{thm:dirac_convolution}
+    Given a Gaussian density $\Normal{\cdot}{\mu}{\sigma^2}$ and a Dirac delta $\dirac{\cdot}$ we know that
+    \begin{align}
+        \int_{-\infty}^{+\infty} \dirac{x}\Normal{x}{\mu}{\sigma^2}\intd{x} & = \Normal{0}{\mu}{\sigma^2}\,.
+    \end{align}
+\end{theorem}
+
+\begin{proof}\label{prf:dirac_convolution}
+    Using both Definition \ref{def:dirac} and Theorem \ref{thm:gaussian_multiplication} we see that
+    \begin{align*}
+        \int_{-\infty}^{+\infty} \dirac{x}\Normal{x}{\mu}{\sigma^2}\intd{x} 
+         & = \int_{-\infty}^{+\infty} \lim_{s^2 \rightarrow 0} \Normal{x}{0}{s^2} \Normal{x}{\mu}{\sigma^2}\intd{x} \\
+         & = \lim_{s^2 \rightarrow 0} \int_{-\infty}^{+\infty} \Gauss{x}{\sigma^{-2}\mu}{s^{-2}+\sigma^{-2}} \cdot \Normal{0}{\mu}{s^2 + \sigma^2}\intd{x} \\
+         & = \lim_{s^2 \rightarrow 0} \Normal{0}{\mu}{s^2 + \sigma^2} \\
+         & = \Normal{0}{\mu}{\sigma^2}\,.
+    \end{align*}
+\end{proof}
+
+\begin{table}
+    \centering{
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        Multiplication & $\dirac{\cdot-\mu_2}$ & $\Gauss{\cdot}{\tau_2}{\rho_2}$ & $\uniform{\cdot}$ \\
+        \hline
+        \hline
+        $\dirac{\cdot-\mu_1}$  & $\dirac{\cdot-\mu_2}$ if $\mu_1 = \mu_2$ & $\dirac{\cdot-\mu_1}$ & $\dirac{\cdot-\mu_1}$\\
+        \hline
+        $\Gauss{\cdot}{\tau_1}{\rho_1}$ & $\dirac{\cdot-\mu_2}$ & $\Gauss{\cdot}{\tau_1 + \tau_2}{\rho_1 + \rho_2}$ & $\Gauss{\cdot}{\tau_1}{\rho_1}$ \\
+        \hline
+        $\uniform{\cdot}$ & $\dirac{\cdot-\mu_2}$ & $\Gauss{\cdot}{\tau_2}{\rho_2}$ & $\uniform{\cdot}$ \\
+        \hline
+    \end{tabular}}
+    \vspace*{1em}
+    
+    \caption{Multiplication of Normal-distributed variables (without normalization constant) for the extreme cases of point-mass, $\dirac{\cdot - \mu}$, density $\Gauss{\cdot}{\tau}{\rho}$, and uniform $\uniform{\cdot}$. \label{tbl:gaussian_multiplication_extreme_cases}}
+\end{table}
+
+\section*{Limit Gaussian Distributions: Gaussian Uniform}
+The limit case of $\sigma^2$ converging to $+\infty$ and $\mu = 0$. The resulting function is effectively a constant function and is formally defined as follows.
+\begin{definition}[Gaussian Uniform] \label{def:uniform}
+    The Gaussian uniform function $\uniform{\cdot}$ is a normalized function defined as constant everywhere. Formally, it is defined by
+    \begin{align}
+        \uniform{x} & := \lim_{\sigma^2 \rightarrow +\infty} \Normal{x}{0}{\sigma^2} \,.
+    \end{align}
+\end{definition}
+A key property of the Gaussian uniform is that if a Gaussian density is multiplied by a Gaussian uniform and renormalized, it returns the original Gaussian density.
+\begin{theorem}[Multiplication of Normal with Gaussian Uniform] \label{thm:uniform_multiplication}
+    Given a Gaussian density $\Normal{\cdot}{\mu}{\sigma^2}$ and a Gaussian uniform $\uniform{\cdot}$ we know for any $x \in \Real$ that 
+    \begin{align}
+        \frac{\uniform{x}\Normal{x}{\mu}{\sigma^2}}{\int_{-\infty}^{+\infty} \uniform{\tilde{x}}\Normal{\tilde{x}}{\mu}{\sigma^2}\intd{\tilde{x}}} & = \Normal{x}{\mu}{\sigma^2} \,.
+    \end{align}
+\end{theorem}
+
+\begin{proof}\label{prf:uniform_multiplication}
+    First note that for any $s^2 > 0$ and using Theorem \ref{thm:gaussian_multiplication} we have
+    \begin{align*}
+        \Normal{x}{0}{s^2} \Normal{x}{\mu}{\sigma^2} 
+        & = \Gauss{x}{\sigma^{-2}\mu}{s^{-2}+\sigma^{-2}} \cdot \Normal{0}{\mu}{s^2 + \sigma^2} \\
+        & = \Normal{x}{\mu\cdot \frac{s^2}{s^2+\sigma^2}}{\sigma^2 \cdot \frac{s^2}{s^2+\sigma^2}} \cdot \Normal{0}{\mu}{s^2 + \sigma^2} \\
+        & = \Normal{x}{\mu\cdot \frac{1}{1+\frac{\sigma^2}{s^2}}}{\sigma^2 \cdot \frac{1}{1+\frac{\sigma^2}{s^2}}} \cdot \Normal{0}{\mu}{s^2 + \sigma^2} \,.
+    \end{align*}
+    Hence, $\int_{-\infty}^{+\infty} \Normal{\tilde{x}}{0}{s^2}\Normal{\tilde{x}}{\mu}{\sigma^2}\intd{\tilde{x}} = \Normal{0}{\mu}{s^2 + \sigma^2}$ for any $s > 0$ and, using Definition \ref{def:uniform}, we see that
+    \begin{align*}
+        \frac{\uniform{x}\Normal{x}{\mu}{\sigma^2}}{\int_{-\infty}^{+\infty} \uniform{\tilde{x}}\Normal{\tilde{x}}{\mu}{\sigma^2}\intd{\tilde{x}}} 
+        & = \lim_{s^2 \rightarrow +\infty} \frac{\Normal{x}{0}{s^2}\Normal{x}{\mu}{\sigma^2}}{\int_{-\infty}^{+\infty} \Normal{\tilde{x}}{0}{s^2}\Normal{\tilde{x}}{\mu}{\sigma^2}\intd{\tilde{x}}} \\
+        & = \lim_{s^2 \rightarrow +\infty} \Normal{x}{\mu\cdot \frac{1}{1+\frac{\sigma^2}{s^2}}}{\sigma^2 \cdot \frac{1}{1+\frac{\sigma^2}{s^2}}} \\
+        & = \Normal{x}{\mu}{\sigma^2} \,.
+    \end{align*}
+\end{proof}
+
+\begin{table}
+    \centering{
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        Division & $\dirac{\cdot-\mu_2}$ & $\Gauss{\cdot}{\tau_2}{\rho_2}$ & $\uniform{\cdot}$ \\
+        \hline
+        \hline
+        $\dirac{\cdot-\mu_1}$  & $\uniform{\cdot}$ if $\mu_1 = \mu_2$ & $\dirac{\cdot-\mu_1}$ & $\dirac{\cdot-\mu_1}$\\
+        \hline
+        $\Gauss{\cdot}{\tau_1}{\rho_1}$ & - & $\Gauss{\cdot}{\tau_1 - \tau_2}{\rho_1 - \rho_2}$ & $\Gauss{\cdot}{\tau_1}{\rho_1}$ \\
+        \hline
+        $\uniform{\cdot}$ & - & - & $\uniform{\cdot}$ \\
+        \hline
+    \end{tabular}}
+    \vspace*{1em}
+    
+    \caption{Division of Normal-distributed variables (without normalization constant) for the extreme cases of point-mass, $\dirac{\cdot - \mu}$, density $\Gauss{\cdot}{\tau}{\rho}$, and uniform $\uniform{\cdot}$. \label{tbl:gaussian_division_extreme_cases}}
+\end{table}
+
+In Tables \ref{tbl:gaussian_multiplication_extreme_cases} and \ref{tbl:gaussian_division_extreme_cases} we have detailed the result of normalized multiplication and division using both the Dirac delta and the Gaussian uniform function as possible factors.
+
+\end{document}
