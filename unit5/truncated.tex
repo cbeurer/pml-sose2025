@@ -1,0 +1,273 @@
+\documentclass[a4paper]{article}
+\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage{blindtext} % Package to generate dummy text
+\usepackage{charter} % Use the Charter font
+\usepackage[utf8]{inputenc} % Use UTF-8 encoding
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage{amsthm, amsmath, amssymb} % Mathematical typesetting
+\usepackage{float} % Improved interface for floating objects
+\usepackage{hyperref} % For hyperlinks in the PDF
+\usepackage{graphicx, multicol} % Enhanced support for graphics
+\usepackage{xcolor} % Driver-independent color extensions
+\usepackage{pseudocode} % Environment for specifying algorithms in a natural way
+\usepackage{datetime} % Uses YEAR-MONTH-DAY format for dates
+
+\addtolength{\hoffset}{-2.25cm}
+\addtolength{\textwidth}{4.5cm}
+\addtolength{\voffset}{-3.25cm}
+\addtolength{\textheight}{5cm}
+
+\setlength{\parskip}{1ex}
+\setlength{\parindent}{0in}
+
+\DeclareUnicodeCharacter{03B1}{$\alpha$}
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{}\renewcommand{\headrulewidth}{0pt} % Blank out the default header
+\fancyfoot[L]{} % Custom footer text
+\fancyfoot[C]{} % Custom footer text
+\fancyfoot[R]{\thepage} % Custom footer text
+\newtheorem{thm}{Theorem}
+\newtheorem{cor}{Corollary}
+
+% define new commands
+\newcommand{\Real}{{\mathbb R}}
+\newcommand{\Normal}[3]{{\mathcal N} \left({#1};{#2},{#3}\right)}
+\newcommand{\Gauss}[3]{{\mathcal G} \left({#1};{#2},{#3}\right)}
+\newcommand{\NormalStandard}[1]{{\mathcal N} \left({#1}\right)}
+\newcommand{\GaussStandard}[1]{{\mathcal G} \left({#1}\right)}
+\newcommand{\NormalCDF}[3]{\Phi \left({#1};{#2},{#3}\right)}
+\newcommand{\NormalStandardCDF}[1]{\Phi \left({#1}\right)}
+\newcommand{\NormalMoment}[3]{M_{#1} \left({#2},{#3}\right)}
+\newcommand{\WeightedEmpirical}[3]{{\mathcal E} \left({#1};{#2},{#3}\right)}
+\newcommand{\Empirical}[2]{{\mathcal E} \left({#1}; {#2}\right)}
+\newcommand{\Bernoulli}[2]{{\mathrm{Ber}} \left({#1};{#2}\right)}
+\newcommand{\Ber}[2]{{\mathcal B} \left({#1};{#2}\right)}
+\newcommand{\expect}[1]{{\mathbb E \left[ {#1} \right]}}
+\newcommand{\var}[1]{{\mathbb V \left[ {#1} \right]}}
+\newcommand{\dirac}[1]{{\delta \left( {#1} \right)}}
+\newcommand{\uniform}[1]{{\mathcal U} \left( {#1} \right)}
+\newcommand{\identity}[1]{{{\mathbb{I}} \left( {#1} \right)}}
+\newcommand{\incoming}[1]{\widecheck{#1}}
+\newcommand{\outgoing}[1]{\widehat{#1}}
+\newcommand{\intd}[1]{\ \mathrm{d}{#1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+% \newcommand{\incoming}[1]{\stackrel{\rightarrow}{#1}}
+% \newcommand{\outgoing}[1]{\stackrel{\leftarrow}{#1}}
+\newcommand{\neighbours}[1]{{\mathrm{ne} \left( {#1} \right)}}
+
+
+% define new environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%-------------------------------
+%	TITLE SECTION (do not modify unless you really need to)
+%-------------------------------
+\fancyhead[C]{}
+\hrule \medskip
+\begin{minipage}{0.295\textwidth}
+    \raggedright
+    \hfill\\
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+    \centering
+    \large
+    On Truncated Gaussians\\
+\end{minipage}
+\begin{minipage}{0.295\textwidth}
+    \raggedleft
+    \hfill\\
+\end{minipage}
+\medskip\hrule
+\bigskip
+ 
+\section*{Background}
+
+Before we prove some key results for truncated Gausians, we recall the definition and key properties of the one-dimensional Gaussian distribution.
+\begin{definition}[One-Dimensional Gaussian Distribution]
+    Given parameters $\mu \in \Real$, $\sigma \in \Real^+$, $\tau \in \Real$, and $\rho \in \Real^+$, a one-dimensional random variable $X \in \Real$ is distributed according to a one-dimensional Gaussian distribution if the density has the form $\Normal{\cdot}{\mu}{\sigma^2}$ or $\Gauss{\cdot}{\tau}{\rho}$ with
+    \begin{align}
+        \Normal{x}{\mu}{\sigma^2} & := \frac{1}{\sqrt{2\pi}\cdot \sigma} \cdot \exp \left( -\frac{(x-\mu)^2}{2\sigma^2}\right) \,, \label{eq:Normal_definition} \\
+        \Gauss{x}{\tau}{\rho}     & := \sqrt{\frac{\rho}{2\pi}} \cdot \exp\left(-\frac{\tau^2}{2\rho} \right) \cdot \exp \left(\tau\cdot x - \rho \cdot \frac{x^2}{2} \right) \,. \label{eq:Gauss_definition}
+    \end{align}
+    If $\mu = \tau = 0$ and $\sigma^2 = \rho = 1$ we simply write 
+    \begin{align}
+        \NormalStandard{x} & := \Normal{x}{0}{1} \,, \\
+        \GaussStandard{x}  & := \Gauss{x}{0}{1} \,.
+    \end{align}
+\end{definition}
+Note that both definitions are identical when using the identities
+\begin{align}
+    \tau & = \frac{\mu}{\sigma^2} & \mbox{and} &  & \rho     & = \sigma^{-2}\,,                                       &  &  & \mbox{or} \\
+    \mu  & = \frac{\tau}{\rho}    & \mbox{and} &  & \sigma^2 & = \rho^{-1} \,. \label{eq:Gauss_Normal_transformation}
+\end{align}
+Also note that if $X \sim \Normal{\cdot}{\mu}{\sigma^2}$ we know that $\expect{X}=\mu$, $\expect{X^2}=\mu^2 + \sigma^2$, and $\var{X}=\sigma^2$. An important quantity that we often use in relation to Gaussian densities is the cumulative distribution function (cdf) of the Gaussian density.
+\begin{definition}[Gaussian Cumulative Distribution Function] \label{def:gaussian_cdf}
+    Given parameters $\mu \in \Real$, $\sigma \in \Real^+$, the cumulative distribution function $\NormalCDF{\cdot}{\mu}{\sigma^2}$ of a Gaussian $\Normal{\cdot}{\mu}{\sigma^2}$ for any $t\in \Real$ is defined by
+    \begin{align}
+        \NormalCDF{t}{\mu}{\sigma^2} & := \int_{-\infty}^t \Normal{x}{\mu}{\sigma^2}\intd{x} \,, \\
+        \NormalStandardCDF{t}        & := \NormalCDF{t}{0}{1} \,.
+    \end{align}
+\end{definition}
+
+Due to the symmetry of the Gaussian density around $\mu$, the cumulative distribution function has some nice properties.
+\begin{theorem}[Gaussian Cumulative Distribution Function] \label{thm:properties_of_Gaussian_CDF}
+    Given parameters $\mu \in \Real$, $\sigma \in \Real^+$, we have for any $t\in \Real$
+    \begin{align}
+        \NormalCDF{t}{\mu}{\sigma^2} & = \NormalStandardCDF{\frac{t-\mu}{\sigma}} \,, \\
+        \NormalStandardCDF{t}        & = 1-\NormalStandardCDF{-t} \,.
+    \end{align}
+\end{theorem}
+
+\section*{Truncated Gaussians}
+
+Before we prove the main result, we derive the following lemma using standard analysis results.
+\begin{lemma}[Moments of a doubly-truncated Gaussian] \label{lem:moments_doubly_truncated_gaussian} Given $l < u \in \Real$, $\mu \in \Real$ and $\sigma^2 \in \Real^+$, we say that $X$ is distributed according to a double-truncated Gaussian if the density $p_X(\cdot)$ is proportional to 
+    \begin{align}
+        p_X(x)\ \  & \propto \ \ \identity{l \leq x < u} \cdot \Normal{x}{\mu}{\sigma^2} \nonumber \,.
+    \end{align}
+    Then, we know that
+    \begin{align}
+        \expect{X^0} & = \NormalCDF{u}{\mu}{\sigma^2} - \NormalCDF{l}{\mu}{\sigma^2} \,, \label{eq:doubly_truncated_gaussian_zeroth_moment} \\
+        \expect{X^1} & = \mu + \sigma^2 \cdot \frac{\Normal{l}{\mu}{\sigma^2} - \Normal{u}{\mu}{\sigma^2}}{\NormalCDF{u}{\mu}{\sigma^2} - \NormalCDF{l}{\mu}{\sigma^2}} \,, \label{eq:doubly_truncated_gaussian_first_moment} \\
+        \expect{X^2} & = \mu^2 + \sigma^2 \cdot \left( 1 - \frac{\left( \mu + u \right) \cdot \Normal{u}{\mu}{\sigma^2} - \left( \mu + l \right) \cdot \Normal{l}{\mu}{\sigma^2}}{\NormalCDF{u}{\mu}{\sigma^2} - \NormalCDF{l}{\mu}{\sigma^2}} \right) \,. \label{eq:doubly_truncated_gaussian_second_moment} 
+    \end{align}
+\end{lemma}
+    
+\begin{proof}
+    To prove \eqref{eq:doubly_truncated_gaussian_zeroth_moment}, we use Definition \ref{def:gaussian_cdf} to see that 
+    \begin{align*}
+        \expect{X^0} & = \int_l^u \Normal{x}{\mu}{\sigma^2} \intd{x} = \NormalCDF{u}{\mu}{\sigma^2} - \NormalCDF{l}{\mu}{\sigma^2} \,.
+    \end{align*}
+    
+    First note that using the chain rule of differentiation and \eqref{eq:Normal_definition}
+    \begin{align}
+        \frac{\intd{}}{\intd{x}} \Normal{x}{\mu}{\sigma^2} & = \Normal{x}{\mu}{\sigma^2} \cdot \frac{\intd{}}{\intd{x}} \left( -\frac{(x-\mu)^2}{2\sigma^2} \right)
+        = -\left( \frac{x-\mu}{\sigma^2} \right) \cdot \Normal{x}{\mu}{\sigma^2} \label{eq:derivative_of_Gaussian}
+    \end{align}
+
+    To prove \eqref{eq:doubly_truncated_gaussian_first_moment}, we now use \eqref{eq:derivative_of_Gaussian} and notice that 
+    \begin{align*}
+        \frac{\intd{}}{\intd{x}} -\sigma^2 \cdot \Normal{x}{\mu}{\sigma^2}
+        & = \left( x - \mu \right) \cdot \Normal{x}{\mu}{\sigma^2} \,.
+    \end{align*}
+    Thus, we see that 
+    \begin{align*}
+        \expect{X^1 - \mu} 
+        & = \frac{1}{\expect{X^0}} \cdot \int_l^u \left( x - \mu \right) \cdot \Normal{x}{\mu}{\sigma^2} \intd{x} \\
+        & = \frac{1}{\expect{X^0}} \cdot \left[ -\sigma^2 \cdot \Normal{x}{\mu}{\sigma^2} \right]_l^u \\
+        & = \sigma^2 \cdot \frac{\Normal{l}{\mu}{\sigma^2} - \Normal{u}{\mu}{\sigma^2}}{\NormalCDF{u}{\mu}{\sigma^2} - \NormalCDF{l}{\mu}{\sigma^2}} \,.
+    \end{align*}
+    
+    To prove \eqref{eq:doubly_truncated_gaussian_second_moment}, we use Definition \ref{def:gaussian_cdf} and \eqref{eq:derivative_of_Gaussian} and notice that 
+    \begin{align*}
+        & \frac{\intd{}}{\intd{x}} \sigma^2 \cdot \left[ \NormalCDF{x}{\mu}{\sigma^2} - \left( \mu + x \right) \cdot \Normal{x}{\mu}{\sigma^2} \right] \\        
+        & =  \sigma^2 \cdot \left[ \Normal{x}{\mu}{\sigma^2} - \left( \mu + x \right) \cdot \frac{\intd{}\ \Normal{x}{\mu}{\sigma^2}}{\intd{x}} - \frac{\intd{}\ \left( \mu + x \right)}{\intd{x}} \cdot \Normal{x}{\mu}{\sigma^2} \right] \\
+        & =  \sigma^2 \cdot \left[ \Normal{x}{\mu}{\sigma^2} + \frac{\left( \mu + x \right) \cdot \left( x-\mu \right)}{\sigma^2} \cdot \Normal{x}{\mu}{\sigma^2}  - \Normal{x}{\mu}{\sigma^2} \right] \\
+        & = \left( x + \mu \right) \cdot \left( x - \mu \right) \cdot \Normal{x}{\mu}{\sigma^2} \\
+        & = \left( x^2 - \mu^2 \right) \cdot \Normal{x}{\mu}{\sigma^2} \,.
+    \end{align*}
+    Thus, we see that 
+    \begin{align*}
+        \expect{X^2 - \mu^2} 
+        & = \frac{1}{\expect{X^0}} \cdot \int_l^u \left( x^2 - \mu^2 \right) \cdot \Normal{x}{\mu}{\sigma^2} \intd{x} \\
+        & = \frac{1}{\expect{X^0}} \cdot \sigma^2 \cdot \left[ \NormalCDF{x}{\mu}{\sigma^2} - \left( \mu + x \right) \cdot \Normal{x}{\mu}{\sigma^2} \right]_l^u \\
+        & = \sigma^2 \cdot \frac{\NormalCDF{u}{\mu}{\sigma^2} - \left( \mu + u \right) \cdot \Normal{u}{\mu}{\sigma^2} - \NormalCDF{l}{\mu}{\sigma^2} + \left( \mu + l \right) \cdot \Normal{l}{\mu}{\sigma^2}}{\NormalCDF{u}{\mu}{\sigma^2} - \NormalCDF{l}{\mu}{\sigma^2}} \\
+        & = \sigma^2 \cdot \left( 1 - \frac{\left( \mu + u \right) \cdot \Normal{u}{\mu}{\sigma^2}  - \left( \mu + l \right) \cdot \Normal{l}{\mu}{\sigma^2}}{\NormalCDF{u}{\mu}{\sigma^2} - \NormalCDF{l}{\mu}{\sigma^2}} \right) \,.
+    \end{align*}
+\end{proof}
+
+Equipped with this lemma, we can now prove the main result.
+\begin{theorem}[Mean and Variance of a doubly-truncated Gaussian] Given $l < u \in \Real$, $\mu \in \Real$, $\sigma^2 \in \Real^+$ and a doubly-truncated Gaussian with density $p_X(\cdot)$ 
+    \begin{align}
+        p_X(x)\ \  & \propto \ \ \identity{l \leq x < u} \cdot \Normal{x}{\mu}{\sigma^2} \nonumber \,,
+    \end{align}
+    we know that
+    \begin{align}
+        \expect{X} & = \mu + \sigma \cdot v_{\frac{l}{\sigma},\frac{u}{\sigma}}\left( \frac{\mu}{\sigma} \right)\,, \label{eq:doubly_truncated_gaussian_expecation} \\
+        \var{X} & = \sigma^2 \cdot \left[1 - w_{\frac{l}{\sigma},\frac{u}{\sigma}}\left( \frac{\mu}{\sigma} \right) \right] \,, \label{eq:doubly_truncated_variance} 
+    \end{align}
+    where
+    \begin{align}
+        v_{l,u}\left( t \right) & =  \frac{\NormalStandard{l - t} - \NormalStandard{u - t}}{\NormalStandardCDF{u - t} - \NormalStandardCDF{l - t}} \label{eq:doubly_truncated_v_function} \\
+        w_{l,u}\left( t \right) & =  \frac{\left( u + t \right) \cdot \NormalStandard{u - t} - \left( l + t \right) \cdot \NormalStandard{l - t}}{\NormalStandardCDF{u - t} - \NormalStandardCDF{l - t}} + v_{l,u}\left( t \right) \cdot \left[ 2t + v_{l,u}\left( t \right) \right]\,. \label{eq:doubly_truncated_w_function} 
+    \end{align}
+\end{theorem}
+
+\begin{proof}
+    The first result \eqref{eq:doubly_truncated_gaussian_expecation} follows directly from \eqref{eq:doubly_truncated_gaussian_first_moment} in Lemma \ref{lem:moments_doubly_truncated_gaussian} using 
+    \begin{align*}
+        \Normal{x}{\mu}{\sigma^2} & = \frac{1}{\sigma} \cdot \NormalStandard{\frac{x-\mu}{\sigma}} \,.
+    \end{align*}
+
+    The second result \eqref{eq:doubly_truncated_variance} follows from \eqref{eq:doubly_truncated_gaussian_second_moment} in Lemma \ref{lem:moments_doubly_truncated_gaussian} noting the variance decomposition theorem:
+    \begin{align*}
+        \var{X} & = \expect{X^2} - \left( \expect{X}\right )^2 \\
+        & = \mu^2 + \sigma^2 \cdot \left( 1 - \underbrace{\frac{\left( \frac{\mu}{\sigma} + \frac{u}{\sigma} \right) \cdot \NormalStandard{\frac{u}{\sigma} - \frac{\mu}{\sigma}} - \left( \frac{\mu}{\sigma} + \frac{l}{\sigma} \right) \cdot \NormalStandard{\frac{l}{\sigma} - \frac{\mu}{\sigma}}}{\NormalStandardCDF{\frac{u}{\sigma} - \frac{\mu}{\sigma}} - \NormalStandardCDF{\frac{l}{\sigma} - \frac{\mu}{\sigma}}}}_{A_{\frac{l}{\sigma},\frac{u}{\sigma},\frac{\mu}{\sigma}}} \right) - \left[ \mu + \sigma \cdot v_{\frac{l}{\sigma},\frac{u}{\sigma}}\left( \frac{\mu}{\sigma} \right) \right]^2 \\
+        & = \sigma^2 \cdot \left( 1 - A_{\frac{l}{\sigma},\frac{u}{\sigma},\frac{\mu}{\sigma}} \right) - 2 \cdot \mu \sigma \cdot v_{\frac{l}{\sigma},\frac{u}{\sigma}}\left( \frac{\mu}{\sigma} \right) - \sigma^2 \cdot v^2_{\frac{l}{\sigma},\frac{u}{\sigma}}\left( \frac{\mu}{\sigma} \right) \\
+        & = \sigma^2 \cdot \left( 1 - A_{\frac{l}{\sigma},\frac{u}{\sigma},\frac{\mu}{\sigma}} - 2 \cdot \frac{\mu}{\sigma} \cdot v_{\frac{l}{\sigma},\frac{u}{\sigma}}\left( \frac{\mu}{\sigma} \right) - v^2_{\frac{l}{\sigma},\frac{u}{\sigma}}\left( \frac{\mu}{\sigma} \right) \right) \\
+        & = \sigma^2 \cdot \left( 1 - \left( A_{\frac{l}{\sigma},\frac{u}{\sigma},\frac{\mu}{\sigma}} + v_{\frac{l}{\sigma},\frac{u}{\sigma}}\left( \frac{\mu}{\sigma} \right) \cdot \left[ 2 \cdot \frac{\mu}{\sigma} + v_{\frac{l}{\sigma},\frac{u}{\sigma}}\left( \frac{\mu}{\sigma} \right) \right] \right) \right) \\
+        & = \sigma^2 \cdot \left(1 - w_{\frac{l}{\sigma},\frac{u}{\sigma}}\left( \frac{\mu}{\sigma} \right) \right)
+    \end{align*}
+\end{proof}
+
+% \begin{theorem}[Moments of positive-truncated Gaussian] Given $\mu \in \Real$ and $\sigma^2 \in \Real^+$, we say that $X$ is distributed according to a positive-truncated Gaussian if the density $p_X(\cdot)$ is proportional to 
+%     \begin{align}
+%         p_X(x)\ \  & \propto \ \ \identity{x > 0} \cdot \Normal{x}{\mu}{\sigma^2} \nonumber \,.
+%     \end{align}
+%     Then, we know that
+%     \begin{align}
+%         \expect{X^0} & = \NormalStandardCDF{t} \label{eq:positive_truncated_gaussian_normalization} \,, \\
+%         \expect{X^1} & = \mu + \sigma \cdot v\left( t \right) \label{eq:positive_truncated_gaussian_expectation} \,, \\
+%         \var{X} & = \sigma^2 \cdot \left( 1 - w\left( t \right)\right) \label{eq:positive_truncated_gaussian_variance} \,,
+%     \end{align}
+%     where $t = \frac{\mu}{\sigma}$,  $v\left( \cdot \right)$ and $w\left( \cdot \right)$ are defined by 
+%     \begin{align}
+%         v\left( t \right) & := \frac{\NormalStandard{t}}{\NormalStandardCDF{t}} \label{eq:v_function} \,, \\
+%         w\left( t \right) & := v\left( t \right) \cdot \left[ v\left( t \right) + t \right] \label{eq:w_function} \,.
+%     \end{align} 
+% \end{theorem}
+% \begin{proof}
+%     The first result \eqref{eq:positive_truncated_gaussian_normalization} follows directly from \eqref{eq:doubly_truncated_gaussian_zeroth_moment} in Lemma \ref{lem:moments_doubly_truncated_gaussian} also using Theorem \ref{thm:properties_of_Gaussian_CDF},
+%     \begin{align*}
+%         \expect{X^0} & = \lim_{u \rightarrow \infty} \NormalCDF{u}{\mu}{\sigma^2} - \NormalCDF{0}{\mu}{\sigma^2} = 1 - \NormalStandardCDF{-\frac{\mu}{\sigma}} = \NormalStandardCDF{\frac{\mu}{\sigma}} \,.
+%     \end{align*}
+
+%     The result \eqref{eq:positive_truncated_gaussian_expectation} for the expectation follows from \eqref{eq:doubly_truncated_gaussian_first_moment} noting that $\NormalStandard{t} = \NormalStandard{-t}$,
+%     \begin{align*}
+%         \expect{X^1} & = \lim_{u \rightarrow \infty} \mu + \sigma^2 \cdot \frac{\Normal{0}{\mu}{\sigma^2} - \Normal{u}{\mu}{\sigma^2}}{\NormalCDF{u}{\mu}{\sigma^2} - \NormalCDF{0}{\mu}{\sigma^2}}  \\
+%         & = \mu + \sigma^2 \cdot \frac{\Normal{0}{\mu}{\sigma^2}}{\NormalStandardCDF{\frac{\mu}{\sigma}}} 
+%         = \mu + \sigma^2 \cdot \frac{\frac{1}{\sigma} \cdot \NormalStandard{-\frac{\mu}{\sigma}}}{\NormalStandardCDF{\frac{\mu}{\sigma}}} 
+%         = \mu + \sigma \cdot \frac{\NormalStandard{\frac{\mu}{\sigma}}}{\NormalStandardCDF{\frac{\mu}{\sigma}}} \,.
+%     \end{align*}
+
+%     Finally, to prove \eqref{eq:positive_truncated_gaussian_variance} we first use \eqref{eq:doubly_truncated_gaussian_second_moment} to derive the second moment of $X$.
+%     \begin{align*}
+%         \expect{X^2} & = \lim_{u \rightarrow \infty} \mu^2 + \sigma^2 \cdot \left( 1 - \frac{\left( \mu + u \right) \cdot \Normal{u}{\mu}{\sigma^2} - \mu \cdot \Normal{0}{\mu}{\sigma^2}}{\NormalCDF{u}{\mu}{\sigma^2} - \NormalCDF{0}{\mu}{\sigma^2}} \right) \\
+%         & = \mu^2 + \sigma^2 \cdot \left( 1 + \frac{\mu}{\sigma} \cdot \frac{\NormalStandard{\frac{\mu}{\sigma}}}{\NormalStandardCDF{\frac{\mu}{\sigma}}} \right) \,.
+%     \end{align*}
+%     Now rewriting this in terms of $t$ and $v\left( \cdot \right)$ and exploiting that $\var{X} = \expect{X^2} - \left(\expect{X}\right)^2$ we have
+%     \begin{align*}
+%         \var{X} & = \mu^2 + \sigma^2 \cdot \left( 1 + t \cdot v\left( t \right) \right) - \left( \mu + \sigma \cdot v\left( t \right) \right)^2 \\
+%         & = \mu^2 + \sigma^2 + \sigma^2 \cdot t \cdot v\left( t \right) - \mu^2  - 2 \cdot \mu \cdot \sigma \cdot v\left( t \right) - \sigma^2 \cdot v\left( t \right) \cdot v\left( t \right)  \\
+%         & = \sigma^2 + \sigma^2 \cdot t \cdot v\left( t \right) - 2 \cdot \sigma^2 \cdot t \cdot v\left( t \right) - \sigma^2 \cdot v\left( t \right) \cdot v\left( t \right)  \\
+%         & = \sigma^2 \cdot \left[ 1 - t \cdot v\left( t \right) - v\left( t \right) \cdot v\left( t \right)  \right] \\
+%         & = \sigma^2 \cdot \left( 1 - v\left( t \right) \cdot \left[ t + v\left( t \right)  \right] \right) \,.
+%     \end{align*}
+
+
+    
+% \end{proof}
+    
+\end{document}

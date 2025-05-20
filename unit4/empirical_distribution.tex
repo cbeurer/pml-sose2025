@@ -1,0 +1,152 @@
+\documentclass[a4paper]{article}
+\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage{blindtext} % Package to generate dummy text
+\usepackage{charter} % Use the Charter font
+\usepackage[utf8]{inputenc} % Use UTF-8 encoding
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage{amsthm, amsmath, amssymb} % Mathematical typesetting
+\usepackage{float} % Improved interface for floating objects
+\usepackage{hyperref} % For hyperlinks in the PDF
+\usepackage{graphicx, multicol} % Enhanced support for graphics
+\usepackage{xcolor} % Driver-independent color extensions
+\usepackage{pseudocode} % Environment for specifying algorithms in a natural way
+\usepackage{datetime} % Uses YEAR-MONTH-DAY format for dates
+
+\addtolength{\hoffset}{-2.25cm}
+\addtolength{\textwidth}{4.5cm}
+\addtolength{\voffset}{-3.25cm}
+\addtolength{\textheight}{5cm}
+
+\setlength{\parskip}{1ex}
+\setlength{\parindent}{0in}
+
+\DeclareUnicodeCharacter{03B1}{$\alpha$}
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{}\renewcommand{\headrulewidth}{0pt} % Blank out the default header
+\fancyfoot[L]{} % Custom footer text
+\fancyfoot[C]{} % Custom footer text
+\fancyfoot[R]{\thepage} % Custom footer text
+\newtheorem{thm}{Theorem}
+\newtheorem{cor}{Corollary}
+
+% define new commands
+\newcommand{\Real}{{\mathbb R}}
+\newcommand{\Normal}[3]{{\mathcal N} \left({#1};{#2},{#3}\right)}
+\newcommand{\Gauss}[3]{{\mathcal G} \left({#1};{#2},{#3}\right)}
+\newcommand{\NormalStandard}[1]{{\mathcal N} \left({#1}\right)}
+\newcommand{\GaussStandard}[1]{{\mathcal G} \left({#1}\right)}
+\newcommand{\NormalCDF}[3]{\Phi \left({#1};{#2},{#3}\right)}
+\newcommand{\NormalStandardCDF}[1]{\Phi \left({#1}\right)}
+\newcommand{\NormalMoment}[3]{M_{#1} \left({#2},{#3}\right)}
+\newcommand{\WeightedEmpirical}[3]{{\mathcal E} \left({#1};{#2},{#3}\right)}
+\newcommand{\Empirical}[2]{{\mathcal E} \left({#1}; {#2}\right)}
+\newcommand{\Bernoulli}[2]{{\mathrm{Ber}} \left({#1};{#2}\right)}
+\newcommand{\Ber}[2]{{\mathcal B} \left({#1};{#2}\right)}
+\newcommand{\expect}[1]{{\mathbb E \left[ {#1} \right]}}
+\newcommand{\var}[1]{{\mathbb V \left[ {#1} \right]}}
+\newcommand{\dirac}[1]{{\delta \left( {#1} \right)}}
+\newcommand{\uniform}[1]{{\mathcal U} \left( {#1} \right)}
+\newcommand{\identity}[1]{{{\mathbb{I}} \left( {#1} \right)}}
+\newcommand{\incoming}[1]{\widecheck{#1}}
+\newcommand{\outgoing}[1]{\widehat{#1}}
+\newcommand{\intd}[1]{\ \mathrm{d}{#1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+% \newcommand{\incoming}[1]{\stackrel{\rightarrow}{#1}}
+% \newcommand{\outgoing}[1]{\stackrel{\leftarrow}{#1}}
+\newcommand{\neighbours}[1]{{\mathrm{ne} \left( {#1} \right)}}
+
+
+% define new environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%-------------------------------
+%	TITLE SECTION (do not modify unless you really need to)
+%-------------------------------
+\fancyhead[C]{}
+\hrule \medskip
+\begin{minipage}{0.295\textwidth}
+    \raggedright
+    \hfill\\
+    % \footnotesize
+    % Start: 24.4.2023\\
+    % Return: 19.5.2023 \hfill\\
+    % \href{https://classroom.github.com/classrooms/124387260-hpi-artificial-intelligence-teaching-pml-classroom}{https://classroom.github.com}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+    \centering
+    \large
+    On Empirical Distributions\\
+\end{minipage}
+\begin{minipage}{0.295\textwidth}
+    \raggedleft
+    \hfill\\
+\end{minipage}
+\medskip\hrule
+\bigskip
+ 
+\section*{Representations}
+In this note, we will introduce and derive some properties of the {\em weighted empirical distribution}.
+\begin{definition}[Weighted empirical distribution]
+    Given a sample $\bs{x} := \left(x_1, \ldots, x_n\right) \in \Real^n$ and $n$ weighting coefficients $\bs{w} := \left(w_1, \ldots, w_n\right) \in {\Real^+}^n$, a one-dimensional random variable $X \in \Real$ is distributed according to the weighted empirical distribution $\WeightedEmpirical{\cdot}{\bs{x}}{\bs{w}}$ with
+    \begin{align}
+        \WeightedEmpirical{x}{\bs{x}}{\bs{w}} & := \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot \dirac{x - x_i} \,, \quad Z := \sum_{j=1}^n w_j \,, \label{eq:weighted_empirical_definition} 
+    \end{align}
+    If $w_1 = w_2 = \cdots = w_n = 1$ we simply write 
+    \begin{align}
+        \Empirical{x}{\bs{x}} & := \WeightedEmpirical{x}{\bs{x}}{\bs{1}} \,.
+    \end{align}
+\end{definition}
+
+\section*{Cumulative Distribution Function}
+\begin{theorem}[Cumlative distribution function] Let $X \sim \WeightedEmpirical{\cdot}{\bs{x}}{\bs{w}}$ be distributed according to a weighted empirical distribution with points $\bs{x} = \left(x_1,\ldots,x_n\right)$ and weights $\bs{w} = \left(w_1,\ldots,w_n\right)$. Then the cumulative distribution function $F_X\left(\cdot\right)$ of $X$ is given by
+    \begin{align}
+        F_X\left(t\right) & = \int_{-\infty}^t \WeightedEmpirical{x}{\bs{x}}{\bs{w}}\intd{x} = \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot \identity{x_i \leq t} \,, \quad Z := \sum_{j=1}^n w_j \,.
+    \end{align}
+\end{theorem}
+\begin{proof}
+    Using the definition of the Dirac delta, $\dirac{x} := \lim_{\sigma^2 \rightarrow 0} \Normal{x}{0}{\sigma^2}$, and \eqref{eq:weighted_empirical_definition} we see that 
+    \begin{align*}
+        F_X\left(t\right) & = \int_{-\infty}^t \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot \lim_{\sigma^2 \rightarrow 0} \Normal{x - x_i}{0}{\sigma^2} \intd{x} \\
+        & = \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot \lim_{\sigma^2 \rightarrow 0} \left[ \int_{-\infty}^t \Normal{x}{x_i}{\sigma^2} \intd{x} \right] \\
+        & = \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot \lim_{\sigma^2 \rightarrow 0} \NormalStandardCDF{\frac{t - x_i}{\sigma}} \\
+        & = \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot \identity{x_i \leq t} \,,
+    \end{align*}
+    where the second line follows from exchanging the order or summation and integration, the third line uses the fact that $\NormalCDF{t}{\mu}{\sigma^2} = \NormalStandardCDF{\frac{t-\mu}{\sigma}}$ and the last line exploits that $\lim_{z^2\rightarrow\infty} \NormalStandardCDF{z} = 1$ and $\lim_{z^2\rightarrow-\infty} \NormalStandardCDF{z} = 0$.
+\end{proof}
+
+\section*{Moments}
+\begin{theorem}[Moments] Let $X \sim \WeightedEmpirical{\cdot}{\bs{x}}{\bs{w}}$ be distributed according to a weighted empirical distribution with points $\bs{x} = \left(x_1,\ldots,x_n\right)$ and weights $\bs{w} = \left(w_1,\ldots,w_n\right)$.Then we have for the $k$-th moment $\expect{X^k}$ of $X$ the following
+    \begin{align}
+        \expect{X^k} & = \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot x_i^k \,, \quad Z := \sum_{j=1}^n w_j \,.
+    \end{align}
+\end{theorem}
+\begin{proof} Let $\NormalMoment{k}{\mu}{\sigma^2}$ be the $k$-th moment of the normal distribution with mean $\mu$ and variance $\sigma^2$. According to \cite{Win2012a}, we know that
+    \begin{align}
+        \NormalMoment{k}{\mu}{\sigma^2} & := \int_{-\infty}^{+\infty} x^k \cdot \Normal{x}{\mu}{\sigma^2} \intd{x} = \sum_{i=0}^{\left\lfloor \frac{k}{2} \right\rfloor} {n \choose 2i} \cdot \left(2i - 1\right)!! \cdot \sigma^{2i} \cdot \mu^{k-2i} \label{eq:normal_moment_function} \,,
+    \end{align} 
+    where $\left(2i - 1\right)!!$ is the double factorial of $2i - 1$ and the product of all odd numbers up to $2i - 1$. Using the definition of the expectation, the Dirac delta, and \eqref{eq:weighted_empirical_definition}, we see that
+    \begin{align*}
+        \expect{X^k} & =  \int_{-\infty}^{+\infty} x^k \cdot \left[ \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot \lim_{\sigma^2 \rightarrow 0} \Normal{x - x_i}{0}{\sigma^2} \right] \intd{x}  \\
+        & =  \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot \lim_{\sigma^2 \rightarrow 0} \int_{-\infty}^{+\infty} x^k \cdot \Normal{x}{x_i}{\sigma^2} \intd{x}  \\
+        & =  \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot \lim_{\sigma^2 \rightarrow 0} \NormalMoment{k}{x_i}{\sigma^2}  \\
+        & =  \frac{1}{Z} \cdot \sum_{i=1}^n w_i \cdot x_i^k \,,
+    \end{align*}
+    where we second line follows from exchanging the order of summation and integration, the third line uses the definition of the moment of a normal distribution, and the last line exploits that $\lim_{\sigma^2 \rightarrow 0} \NormalMoment{k}{x_i}{\sigma^2} = \NormalMoment{k}{x_i}{0} = x_i^k$ using \eqref{eq:normal_moment_function}.
+\end{proof}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}
