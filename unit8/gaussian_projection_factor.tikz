@@ -1,0 +1,20 @@
+\begin{tikzpicture}
+
+% Nodes
+\node[variablenode] (w) {$\bs{W}$};
+\node[factornode, right=3cm of w] (f) {};
+\node[variablenode, right=3cm of f] (t) {$T$};
+\node[below=0cm of f] {\small $\dirac{T - \transpose{\bs{W}}\bs{x}}$};
+
+% Messages
+\draw[connection] (w) -- (f);
+\draw[connection] (t) -- (f);
+
+\path[message] (w) edge[bend left=30] node[above] {\tiny $\Normal{\cdot}{\bs{\mu}}{\bs{\Sigma}}$} (f);
+\path[message] (t) edge[bend right=30] node[above] {\tiny $\Normal{\cdot}{m}{s^2}$} (f);
+\path[message] (f) edge[bend left=30] node[below] {\tiny $m_{f \to \bs{W}}(\cdot)$} (w);
+\path[message] (f) edge[bend right=30] node[below] {\tiny $m_{f \to T}(\cdot)$} (t);
+
+
+    
+\end{tikzpicture}        

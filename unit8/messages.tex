@@ -1,0 +1,433 @@
+\documentclass[a4paper]{article}
+\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage{blindtext} % Package to generate dummy text
+\usepackage{charter} % Use the Charter font
+\usepackage[utf8]{inputenc} % Use UTF-8 encoding
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage{amsthm, amsmath, amssymb, amsfonts} % Mathematical typesetting
+\usepackage{float} % Improved interface for floating objects
+\usepackage{hyperref} % For hyperlinks in the PDF
+\usepackage{graphicx, multicol} % Enhanced support for graphics
+\usepackage{xcolor} % Driver-independent color extensions
+\usepackage{pseudocode} % Environment for specifying algorithms in a natural way
+\usepackage{datetime} % Uses YEAR-MONTH-DAY format for dates
+\usepackage{mathabx}
+
+\usepackage{tikz}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes,shapes.geometric,shapes.misc}
+\usetikzlibrary{positioning}
+
+% this style is applied by default to any tikzpicture included via \tikzfig
+\tikzstyle{tikzfig}=[baseline=-0.25em,scale=0.5,node distance=1.5cm,
+  variablenode/.style={circle, draw=black, thick, minimum size=5mm},
+  factornode/.style={rectangle, draw=black, thick, fill=black, minimum size=4mm},
+  connection/.style={-, >=stealth, thick, rounded corners},
+  message/.style={->, >=stealth, thick, rounded corners}]
+
+% these are dummy properties used by TikZiT, but ignored by LaTex
+\pgfkeys{/tikz/tikzit fill/.initial=0}
+\pgfkeys{/tikz/tikzit draw/.initial=0}
+\pgfkeys{/tikz/tikzit shape/.initial=0}
+\pgfkeys{/tikz/tikzit category/.initial=0}
+
+% standard layers used in .tikz files
+\pgfdeclarelayer{edgelayer}
+\pgfdeclarelayer{nodelayer}
+\pgfsetlayers{background,edgelayer,nodelayer,main}
+
+% style for blank nodes
+\tikzstyle{none}=[inner sep=0mm]
+
+% include a .tikz file
+\newcommand{\tikzfig}[1]{%
+{\tikzstyle{every picture}=[tikzfig]
+\IfFileExists{#1.tikz}
+  {\input{#1.tikz}}
+  {%
+    \IfFileExists{./figures/tikz/#1.tikz}
+      {\input{./figures/#1.tikz}}
+      {\tikz[baseline=-0.5em]{\node[draw=red,font=\color{red},fill=red!10!white] {\textit{#1}};}}%
+  }}%
+}
+
+% the same as \tikzfig, but in a {center} environment
+\newcommand{\ctikzfig}[1]{%
+\begin{center}\rm
+  \tikzfig{#1}
+\end{center}}
+
+% fix strange self-loops, which are PGF/TikZ default
+\tikzstyle{every loop}=[]
+
+\addtolength{\hoffset}{-2.25cm}
+\addtolength{\textwidth}{4.5cm}
+\addtolength{\voffset}{-3.25cm}
+\addtolength{\textheight}{5cm}
+
+\setlength{\parskip}{1ex}
+\setlength{\parindent}{0in}
+
+\DeclareUnicodeCharacter{03B1}{$\alpha$}
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{}\renewcommand{\headrulewidth}{0pt} % Blank out the default header
+\fancyfoot[L]{} % Custom footer text
+\fancyfoot[C]{} % Custom footer text
+\fancyfoot[R]{\thepage} % Custom footer text
+\newtheorem{thm}{Theorem}
+\newtheorem{cor}{Corollary}
+
+% define new commands
+\newcommand{\Real}{{\mathbb R}}
+\newcommand{\Normal}[3]{{\mathcal N} \left({#1};{#2},{#3}\right)}
+\newcommand{\Gauss}[3]{{\mathcal G} \left({#1};{#2},{#3}\right)}
+\newcommand{\NormalStandard}[1]{{\mathcal N} \left({#1}\right)}
+\newcommand{\GaussStandard}[1]{{\mathcal G} \left({#1}\right)}
+\newcommand{\NormalCDF}[3]{\Phi \left({#1};{#2},{#3}\right)}
+\newcommand{\NormalStandardCDF}[1]{\Phi \left({#1}\right)}
+\newcommand{\Bernoulli}[2]{{\mathrm{Ber}} \left({#1};{#2}\right)}
+\newcommand{\Ber}[2]{{\mathcal B} \left({#1};{#2}\right)}
+\newcommand{\expect}[1]{{\mathbb E \left[ {#1} \right]}}
+\newcommand{\bs}[1]{{\boldsymbol{#1}}}
+\newcommand{\var}[1]{{\mathbb V \left[ {#1} \right]}}
+\newcommand{\dirac}[1]{{\delta \left( {#1} \right)}}
+\newcommand{\uniform}[1]{{\mathcal U} \left( {#1} \right)}
+\newcommand{\identity}[1]{{{\mathbb{I}} \left( {#1} \right)}}
+\newcommand{\incoming}[1]{\widecheck{#1}}
+\newcommand{\outgoing}[1]{\widehat{#1}}
+\newcommand{\intd}[1]{\ \mathrm{d}{#1}}
+\newcommand{\transpose}[1]{{#1}^\top}
+% \newcommand{\incoming}[1]{\stackrel{\rightarrow}{#1}}
+% \newcommand{\outgoing}[1]{\stackrel{\leftarrow}{#1}}
+\newcommand{\neighbours}[1]{{\mathrm{ne} \left( {#1} \right)}}
+
+
+% define new environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%-------------------------------
+%	TITLE SECTION (do not modify unless you really need to)
+%-------------------------------
+\fancyhead[C]{}
+\hrule \medskip
+\begin{minipage}{0.295\textwidth}
+    \raggedright
+    \hfill\\
+    % \footnotesize
+    % Start: 24.4.2023\\
+    % Return: 19.5.2023 \hfill\\
+    % \href{https://classroom.github.com/classrooms/124387260-hpi-artificial-intelligence-teaching-pml-classroom}{https://classroom.github.com}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+    \centering
+    \large
+    Gaussian Projection Factor\\
+\end{minipage}
+\begin{minipage}{0.295\textwidth}
+    \raggedleft
+    \hfill\\
+\end{minipage}
+\medskip\hrule
+\bigskip
+ 
+\section*{Background}
+In the following, we will use both the one-dimensional and multi-dimensional Gaussian distribution.
+\begin{definition}[One-Dimensional Gaussian Distribution]
+    Given parameters $\mu \in \Real$, $\sigma \in \Real^+$, $\tau \in \Real$, and $\rho \in \Real^+$, a one-dimensional random variable $X \in \Real$ is distributed according to a one-dimensional Gaussian distribution if the density has the form $\Normal{\cdot}{\mu}{\sigma^2}$ or $\Gauss{\cdot}{\tau}{\rho}$ with
+    \begin{align}
+        \Normal{x}{\mu}{\sigma^2} & := \frac{1}{\sqrt{2\pi}\cdot \sigma} \cdot \exp \left( -\frac{(x-\mu)^2}{2\sigma^2}\right) \,, \label{eq:1D_Normal_definition} \\
+        \Gauss{x}{\tau}{\rho}     & := \sqrt{\frac{\rho}{2\pi}} \cdot \exp\left(-\frac{\tau^2}{2\rho} \right) \cdot \exp \left(\tau\cdot x - \rho \cdot \frac{x^2}{2} \right) \,. \label{eq:1D_Gauss_definition}
+    \end{align}
+    If $\mu = \tau = 0$ and $\sigma^2 = \rho = 1$ we simply write 
+    \begin{align*}
+        \NormalStandard{x} & := \Normal{x}{0}{1} \,, \\
+        \GaussStandard{x}  & := \Gauss{x}{0}{1} \,.
+    \end{align*}
+\end{definition}
+Note that both definitions are identical when using the identities
+\begin{align}
+    \tau & = \frac{\mu}{\sigma^2} & \mbox{and} &  & \rho     & = \sigma^{-2}\,,                                       &  &  & \mbox{or} \\
+    \mu  & = \frac{\tau}{\rho}    & \mbox{and} &  & \sigma^2 & = \rho^{-1} \,. \label{eq:1D_Gauss_Normal_transformation}
+\end{align}
+
+\begin{definition}[Multi-Dimensional Gaussian Distribution]
+    Given parameters $\bs{\mu} \in \Real^n$, $\bs{\Sigma} \in \Real^{n \times n}$, $\bs{\tau} \in \Real^n$, and $\bs{P} \in \Real^{n \times n}$, where $\bs{P}$ and $\bs{\Sigma}$ are positive-definite matrices, an $n$-dimensional random variable $\bs{X} \in \Real^n$ is distributed according to a multi-dimensional Gaussian distribution if the density has the form $\Normal{\cdot}{\bs{\mu}}{\boldsymbol{\Sigma}}$ or $\Gauss{\cdot}{\bs{\tau}}{\bs{P}}$ with
+    \begin{align}
+        \Normal{\bs{x}}{\bs{\mu}}{\bs{\Sigma}} & := \left(2\pi\right)^{-\frac{n}{2}} \left|\bs{\Sigma}\right|^{-\frac{1}{2}} \cdot \exp \left( -\frac{1}{2} \transpose{(\bs{x}-\bs{\mu})} \bs{\Sigma}^{-1} (\bs{x}-\bs{\mu}) \right) \,, \label{eq:Normal_definition} \\
+        \Gauss{\bs{x}}{\bs{\tau}}{\bs{P}}      & := \left(2\pi\right)^{-\frac{n}{2}} \left|\bs{P}\right|^{\frac{1}{2}} \cdot \exp \left( -\frac{1}{2} \transpose{\bs{\tau}} \bs{P}^{-1} \bs{\tau} \right) \cdot \exp \left( \transpose{\bs{\tau}} \bs{x} -\frac{1}{2} \transpose{\bs{x}} \bs{P} \bs{x} \right)\,. \label{eq:Gauss_definition}
+    \end{align}
+    If $\bs{P}$ or $\bs{\Sigma}$ are not of full rank, the inverse is replaced by the pseudo-inverse, the exponent on $2\pi$ changes from $-\frac{n}{2}$ to $-\frac{d}{2}$ where $d$ is the number of non-zero eigenvalues of $\bs{P}$ or $\bs{\Sigma}$, respectively, and the determinant is replaced by the pseudo-determinant defined as the product of all $d$ non-zero eigenvalues.
+\end{definition}
+Note that both definitions are identical when using the identities
+\begin{align}
+    \bs{\tau} & = \bs{\Sigma}^{-1}\bs{\mu} & \mbox{and} &  & \bs{P}      & = \bs{\Sigma}^{-1} \,,                                       &  &  & \mbox{or} \label{eq:Normal_Gauss_transformation} \\
+    \bs{\mu}  & = \bs{P}^{-1}\bs{\tau}     & \mbox{and} &  & \bs{\Sigma} & = \bs{P}^{-1} \,. \label{eq:Gauss_Normal_transformation}
+\end{align}
+
+The following lemma will be useful for later proofs.
+\begin{lemma}[Gaussian Density Transformation Lemma] \label{lem:gaussian_density_transformation}
+    Given parameters $\mu \in \Real$, $\sigma \in \Real^+$, and $a \not= 0$ we have
+    \begin{align*}
+        \Normal{ax}{\mu}{\sigma^2} & = \frac{1}{|a|}\cdot\Normal{x}{\frac{\mu}{a}}{\frac{\sigma^2}{a^2}}\,.
+    \end{align*}
+\end{lemma}
+A central theorem that allows us to derive many of our efficient factor update equations is the multi-dimensional Gaussian multiplication theorem.
+\begin{theorem}[Gaussian Multiplication Theorem] \label{thm:gaussian_multiplication}
+    Given two Gaussian densities $\Gauss{\cdot}{\bs{\tau}_1}{\bs{P}_1}$ and $\Gauss{\cdot}{\bs{\tau}_2}{\bs{P}_2}$ we have
+    \begin{align*}
+        \Gauss{\bs{x}}{\bs{\tau}_1}{\bs{P}_1} \cdot \Gauss{\bs{x}}{\bs{\tau}_2}{\bs{P}_2} & = \Gauss{\bs{x}}{\bs{\tau}_1 + \bs{\tau}_2}{\bs{P}_1 + \bs{P}_2} \cdot \Normal{\bs{\mu}_1}{\bs{\mu}_2}{\bs{\Sigma}_1 + \bs{\Sigma}_2}\,.
+    \end{align*}
+\end{theorem}
+
+\subsection*{Factor Graphs and Message Passing}
+
+
+Before we derive all (approximate) message equations, we would like to introduce the concept of factor graphs and message passing. A factor graph is a bipartite graph that represents the factorization of a function of $n$ variables. In a factor graph, we have two types of nodes: {\em variable nodes} (denoted by $X_1,\ldots,X_n$) and {\em factor nodes} (denoted by $f_1,\ldots,f_m$). Variable nodes represent random variables, while factor nodes represent functions that depend on the variables. More formally, a factor graph defines the non-normalized joint probability function
+\begin{align}
+    p(x_1,\ldots,x_n) = \prod_{i=1}^m f_i(\bs{x}_{\neighbours{f_i}}) \,, \label{eq:joint}
+\end{align}
+where $\neighbours{f_i} \subseteq \{1,\ldots,n\}$ denotes the index set of variables that are connected to the factor node $f_i$ and $\bs{x}_{\neighbours{f_i}}$ is the list of values $x_j$ where $j \in \neighbours{f_i}$. Moreover, $\neighbours{X_j} \subseteq \{1,\ldots,m\}$ denotes the set of factors $f_i$ that are connected to the variable node $X_j$.
+
+\paragraph{Marginals and Message Passing} In message passing, we are interested to compute the non-normalized marginal $p_{X_j}(x_j)$ defined by
+\begin{align}
+    p_{X_j}(x_j) = \int_{-\infty}^{+\infty} \cdots \int_{-\infty}^{+\infty} p(x_1,\ldots,x_n) \intd{x_1} \cdots \intd{x_{j-1}} \intd{x_{j+1}} \cdots \intd{x_n} \,. \label{eq:marginal_def}
+\end{align}
+If the factor graph is a tree, then we can easily compute $p_{X_j}(x_j)$ by recursively applying the distributive law
+\begin{align}
+    p_{X_j} (x_j)        & = \prod_{i \in \neighbours{X_j}} m_{f_i \to X_j}(x_j) \,, \label{eq:marginal}                                                                                                                                                                     \\
+    m_{f_i \to X_j}(x_j) & = \int_{-\infty}^{+\infty} \cdots \int_{-\infty}^{+\infty} f_i(\bs{x}_{\neighbours{f_i}}) \cdot \prod_{k \in \neighbours{f_i} \setminus \{j\}} m_{X_k \to f_i}(x_k) \intd{\bs{x}_{\neighbours{f_i} \setminus \{j\}}} \,, \label{eq:factor_to_var} \\
+    m_{X_j \to f_i}(x_j) & = \prod_{k \in \neighbours{X_j} \setminus \{i\}} m_{f_k \to X_j}(x_j) \,. \label{eq:var_to_factor}
+\end{align}
+Note that by virtue of \eqref{eq:marginal} and \eqref{eq:var_to_factor} we have for any $f_i$ and $X_j, j\in \neighbours{f_i}$,
+\begin{align}
+    p_{X_j}(x_j) = m_{f_i \to X_j}(x_j) \cdot m_{X_j \to f_i}(x_j)\,. \label{eq:marginal_factor}
+\end{align}
+
+\paragraph{Normalization constant} Often, we require a normalized joint probability $\widetilde{p}(x_1,\ldots,x_n) = \frac{1}{Z} \cdot p(x_1,\ldots,x_n)$ rather than a non-normalized joint probability $p(x_1,\ldots,x_n)$ where the normalization constant $Z$ defined by
+\begin{align}
+    Z = \int_{-\infty}^{+\infty} \cdots \int_{-\infty}^{+\infty} p(x_1,\ldots,x_n) \intd{x_1} \cdots \intd{x_n} = \int_{-\infty}^{+\infty} \cdots \int_{-\infty}^{+\infty}  \prod_{i=1}^m f_i(\bs{x}_{\neighbours{f_i}}) \intd{x_1} \cdots \intd{x_n} \,. \label{eq:partition}
+\end{align}
+
+\begin{theorem}
+    Given a factor tree, the normalization constant $Z$ in terms of scaled messages $\widetilde{m}_{f_i \to X_j}(x_j) = \alpha_{i,j} \cdot m_{f_i \to X_j}(x_j)$ and $\widetilde{m}_{X_j \to f_i}(x_j) = \beta_{j,i} \cdot m_{X_j \to f_i}(x_j)$ is given by
+    \begin{align}
+        Z & = \left( \prod_{i=1}^m Z_{f_i} \right) \cdot \left( \prod_{j=1}^n Z_{X_j} \right)\,, \label{eq:partition_message}
+    \end{align}
+    where the constants $Z_{f_i}$ for all factors $f_i$ and $Z_{X_j}$ for all variables $X_j$ are given by
+    \begin{align}
+        Z_{f_i} & = \frac{\int_{-\infty}^{+\infty} \cdots \int_{-\infty}^{+\infty} f_i(\bs{x}_{\neighbours{f_i}}) \cdot \prod_{k \in \neighbours{f_i}} \widetilde{m}_{X_k \to f_i}(x_k) \intd{\bs{x}_{\neighbours{f_i}}}}{\int_{-\infty}^{+\infty} \cdots \int_{-\infty}^{+\infty} \prod_{k \in \neighbours{f_i}} \widetilde{m}_{f_i \to X_k}(x_k) \cdot \widetilde{m}_{X_k \to f_i}(x_k) \intd{\bs{x}_{\neighbours{f_i}}}} \,, \label{eq:partition_factor_message} \\
+        Z_{X_j} & = \int_{-\infty}^{+\infty} \prod_{i \in \neighbours{X_j}} \widetilde{m}_{f_i \to X_j}(x_j) \intd{x_j} \,. \label{eq:partition_marginal_message}
+    \end{align}
+\end{theorem}
+
+
+\section*{Gaussian Projection Factor} \label{sec:gaussian_projection_factor}
+
+\begin{figure}[t!]
+    \begin{center}
+        \centering{\tikzfig{gaussian_projection_factor}}
+    \end{center}
+    \caption{\label{fig:gaussian_projection_factor} The Gaussian projection factor ensures that the inner product of random vector $\bs{w}$ with a fixed vector $\bs{x}$ equals a random value $t$.}
+\end{figure}
+
+One useful factor to use for linear function models is the {\em Gaussian projection factor} which is similar to the weighted sum factor in that it maps the output $t$ to the weighted sum $w_1 \cdot x_1 + \cdots + w_n \cdot x_n = \transpose{\bs{w}}\bs{x}$ with fixed $\bs{x}$. However, here we consider the vector $\bs{w}$ to be distributed according to a multi-dimensional Gaussian. Formally, this factor is specified by (see also Figure \ref{fig:gaussian_projection_factor})
+\begin{align}
+    f(\bs{w},t) & = \dirac{t - \transpose{\bs{w}}\bs{x}} \,. \label{eq:gaussian_projection_factor}
+\end{align}
+
+\subsection*{Message $m_{f\rightarrow T}$}
+In the following we show that
+\begin{align}
+    m_{f\rightarrow T} (t)
+     & = \Normal{t}{\transpose{\bs{\mu}}\bs{x}}{\transpose{\bs{x}}\bs{\Sigma}\bs{x}} \,. \label{eq:msg_from_f_to_t_gaussian_projection_factor}
+\end{align}
+Intuitively, the message from the factor to the inner product $T$ is a Gaussian with mean equal to the sum of the weighted means $x_i \cdot \mu_i$ of the incoming messages $\Normal{\cdot}{\bs{\mu}}{\bs{\Sigma}}$ and variance equals the covariance-weighted inner product of $\bs{x}$, that is, $\transpose{\bs{x}}\bs{\Sigma}\bs{x}$. In order to derive this, we will use the following lemma.
+\begin{lemma} \label{lem:folding_lemma}
+    Given two Gaussian densities $\Normal{y}{m + w \cdot x}{\epsilon^2}$ and $\Normal{w}{\mu}{1}$ we have the following identity
+    \begin{align*}
+        \int_{-\infty}^{+\infty} \Normal{y}{m + w \cdot x}{\epsilon^2} \cdot \Normal{w}{\mu}{1} \intd{w}
+         & = \Normal{y}{m + \mu \cdot x}{\epsilon^2 + x^2} \,. 
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    This can be shown using Lemma \ref{lem:gaussian_density_transformation} and Theorem \ref{thm:gaussian_multiplication}:
+    \begin{align*}
+        \int_{-\infty}^{+\infty} \Normal{y}{m + w \cdot x}{\epsilon^2} \cdot \Normal{w}{\mu}{1} \intd{w}
+         & = \int_{-\infty}^{+\infty} \Normal{w \cdot x}{y - m}{\epsilon^2} \cdot \Normal{w}{\mu}{1} \intd{w} \\
+         & = \int_{-\infty}^{+\infty} \frac{1}{|x|} \cdot \Normal{w}{\frac{y - m}{x}}{\frac{\epsilon^2}{x^2}} \cdot \Normal{w}{\mu}{1} \intd{w} \\
+         & = \frac{1}{|x|} \cdot \Normal{\mu}{\frac{y - m}{x}}{\frac{\epsilon^2}{x^2} + 1} \\
+         & = \Normal{\mu \cdot x}{y - m}{\epsilon^2 + x^2} \\
+         & = \Normal{y}{ m + \mu \cdot x}{\epsilon^2 + x^2} 
+    \end{align*}
+    where the second and fourth line follows from Lemma \ref{lem:gaussian_density_transformation} and the third line follows from Theorem \ref{thm:gaussian_multiplication}.
+\end{proof}
+
+\begin{proof}[Proof of \eqref{eq:msg_from_f_to_t_gaussian_projection_factor}]
+    Before we prove the more general statement \eqref{eq:msg_from_f_to_t_gaussian_projection_factor}, let us assume that $\bs{\Sigma} = \mathbf{I}$ and show that 
+    \begin{align}
+        m_{f\rightarrow T} (t)
+         & = \int_{-\infty}^{+\infty} \cdots \int_{-\infty}^{+\infty} \dirac{t - \transpose{\bs{w}}\bs{x}} \cdot \Normal{\bs{w}}{\bs{\mu}}{\mathbf{I}} \intd{w_1} \cdots \intd{w_n} = \Normal{t}{\transpose{\bs{\mu}}\bs{x}}{\transpose{\bs{x}}\bs{x}} \,. \label{eq:axis_aligned_integral}
+    \end{align}
+    Noting that $\Normal{\bs{w}}{\bs{\mu}}{\mathbf{I}} = \prod_{i=1}^n \Normal{w_i}{\mu_i}{1}$ we see that 
+    \begin{align*}
+        m_{f\rightarrow T} (t)
+         & = \lim_{\epsilon^2 \to 0} \int_{-\infty}^{+\infty} \cdots \int_{-\infty}^{+\infty} \Normal{t}{\sum_{i=1}^n w_i \cdot x_i}{\epsilon^2}\cdot \prod_{i=1}^n \Normal{w_i}{\mu_i}{1} \intd{w_1} \cdots \intd{w_n} \\
+         & = \lim_{\epsilon^2 \to 0} \int_{-\infty}^{+\infty} \left[ \cdots \left[ \int_{-\infty}^{+\infty} \Normal{t}{\sum_{i=1}^n w_i \cdot x_i}{\epsilon^2} \cdot \Normal{w_1}{\mu_1}{1} \intd{w_1} \right] \cdots \right] \cdot \Normal{w_n}{\mu_n}{1} \intd{w_n} \\
+         & = \lim_{\epsilon^2 \to 0} \Normal{t}{\sum_{i=1}^n \mu_i \cdot x_i}{\epsilon^2 + \sum_{i=1}^n x_i^2} \\
+         & = \Normal{t}{\transpose{\bs{\mu}}\bs{x}}{\transpose{\bs{x}}\bs{x}} \,,
+    \end{align*}
+    where the second line follows by factoring out all parts of the product that do not depend on the integration variable and the third line follows from a repeated application of Lemma \ref{lem:folding_lemma}. 
+
+    Now let us consider the more general case of $m_{\bs{W} \to f}(\bs{w}) = \Normal{\bs{w}}{\bs{\mu}}{\bs{\Sigma}}$ and the eigen decomposition of $\bs{\Sigma}$ in
+    \begin{align}
+        \bs{\Sigma} & = \bs{U} \bs{\Lambda} \transpose{\bs{U}} \,, \label{eq:SVD}
+    \end{align}
+    where $\bs{U}$ is an $n \times n$ orthogonal matrix (that is, $\bs{U}\transpose{\bs{U}} = \transpose{\bs{U}}\bs{U} = \mathbf{I}$) and $\bs{\Lambda}$ is a diagonal matrix of eigenvalues. Let us define
+    \begin{align*}
+        \widetilde{\bs{w}} & = \bs{\Lambda}^{-\frac{1}{2}} \transpose{\bs{U}} \bs{w} \,, & 
+        \widetilde{\bs{\mu}} & = \bs{\Lambda}^{-\frac{1}{2}} \transpose{\bs{U}} \bs{\mu} \,, & 
+        \widetilde{\bs{x}} & = \bs{\Lambda}^{\frac{1}{2}} \transpose{\bs{U}} \bs{x} \,.
+    \end{align*}
+    Using \eqref{eq:Normal_definition} and \eqref{eq:SVD}, it is easy to verify that
+    \begin{align*}
+        \transpose{\widetilde{\bs{w}}}\widetilde{\bs{x}} & = \transpose{\bs{w}} \bs{U} \bs{\Lambda}^{-\frac{1}{2}} \bs{\Lambda}^{\frac{1}{2}} \transpose{\bs{U}} \bs{x} = \transpose{\bs{w}}\bs{x} \\
+        \left|\bs{\Sigma}\right|^{-\frac{1}{2}} \cdot \Normal{\widetilde{\bs{w}}}{\widetilde{\bs{\mu}}}{\mathbf{I}} & = \left(2\pi\right)^{-\frac{n}{2}} \cdot \left|\bs{\Sigma}\right|^{-\frac{1}{2}} \cdot \exp \left( -\frac{1}{2} \transpose{\left( \bs{\Lambda}^{-\frac{1}{2}} \transpose{\bs{U}} \left( \bs{w}-\bs{\mu} \right) \right)} \left( \bs{\Lambda}^{-\frac{1}{2}} \transpose{\bs{U}} \left( \bs{w}-\bs{\mu} \right) \right) \right) \\ 
+        & = \left(2\pi\right)^{-\frac{n}{2}} \cdot \left|\bs{\Sigma}\right|^{-\frac{1}{2}} \cdot \exp \left( -\frac{1}{2} \transpose{\left( \bs{w}-\bs{\mu} \right)} \bs{U} \bs{\Lambda}^{-1} \transpose{\bs{U}} \left( \bs{w}-\bs{\mu} \right) \right) \\
+        & = \Normal{\bs{w}}{\bs{\mu}}{\bs{\Sigma}} \,.
+    \end{align*}
+    Thus, we can write $m_{f\rightarrow T} (t)$ as 
+    \begin{align*}
+        m_{f\rightarrow T} (t) & = \int \dirac{t - \transpose{\bs{w}}\bs{x}} \cdot \Normal{\bs{w}}{\bs{\mu}}{\bs{\Sigma}} \intd{\bs{w}} \\
+        & = \int \dirac{t - \transpose{\widetilde{\bs{w}}}\widetilde{\bs{x}}} \cdot \left|\bs{\Sigma}\right|^{-\frac{1}{2}} \cdot \Normal{\widetilde{\bs{w}}}{\widetilde{\bs{\mu}}}{\mathbf{I}} \cdot \left| \bs{\Lambda}^{-\frac{1}{2}} \transpose{\bs{U}} \right|^{-1}  \intd{\widetilde{\bs{w}}} \\
+        & = \left| \bs{\Lambda} \right|^{-\frac{1}{2}} \cdot \left| \bs{\Lambda} \right|^{\frac{1}{2}} \cdot \Normal{t}{\transpose{\widetilde{\bs{\mu}}}\widetilde{\bs{x}}}{\transpose{\widetilde{\bs{x}}}\widetilde{\bs{x}}} \\
+        & = \Normal{t}{\transpose{\bs{\mu}}\bs{x}}{\transpose{\bs{x}}\bs{\Sigma}\bs{x}} \,,
+    \end{align*}
+    where we used the inverse determinant of the Jacobian $\bs{\Lambda}^{-\frac{1}{2}} \transpose{\bs{U}}$ in the second line and $\left| \bs{U} \right| = 1$ together with \eqref{eq:axis_aligned_integral} in the third line.
+\end{proof}
+
+\subsection*{Message $m_{f\rightarrow \bs{W}}$}
+In the following we show that
+\begin{align}
+    m_{f\rightarrow \bs{W}} (\bs{w})
+     & \propto \Gauss{\bs{w}}{\frac{m}{s^2} \cdot \bs{x}}{\frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}}} \,. \label{eq:msg_from_f_to_w_gaussian_projection_factor}
+\end{align}
+Intuitively, the message from the factor to the vector $\bs{W}$ is a one-dimensional Gaussian along the ray $\bs{x}$ in $\Real^n$ with precision-mean equal to the projection direction $\bs{x}$ scaled by the precision-mean $\frac{m}{s^2}$ of the incoming messsage $m_{T \to f}(\cdot)$ and a rank-1 precision matrix $\bs{x}\transpose{\bs{x}}$ scaled by the precision $\frac{1}{s^2}$ of the incoming message $m_{T \to f}(\cdot)$.
+
+\begin{proof}[Proof of \eqref{eq:msg_from_f_to_w_gaussian_projection_factor}]
+    By virtue of \eqref{eq:factor_to_var} and \eqref{eq:gaussian_projection_factor} we know that
+    \begin{align*}
+        m_{f \to \bs{W}}(\bs{w}) & = \int_{-\infty}^{+\infty} \dirac{t - \transpose{\bs{w}}\bs{x}} \cdot \Normal{t}{m}{s^2} \intd{t} 
+        = \lim_{\epsilon^2 \to 0} \int_{-\infty}^{+\infty} \Normal{t}{ \transpose{\bs{w}}\bs{x}}{\epsilon^2} \cdot \Normal{t}{m}{s^2} \intd{t} \\
+        & = \lim_{\epsilon^2 \to 0} \Normal{m}{ \transpose{\bs{w}}\bs{x}}{\epsilon^2 + s^2} \\
+        & = \Normal{m}{ \transpose{\bs{w}}\bs{x}}{s^2} \,,
+    \end{align*}
+    where the second line follows from Theorem \ref{thm:gaussian_multiplication}. Using \eqref{eq:1D_Normal_definition} we can rewrite this as 
+    \begin{align*}
+        m_{f \to \bs{W}}(\bs{w}) & = \left( 2\pi \right)^{-\frac{1}{2}} \cdot \left( s^2 \right)^{-\frac{1}{2}} \cdot \exp \left( -\frac{1}{2} \cdot \frac{\left(\transpose{\bs{w}}\bs{x} - m \right)^2}{s^2} \right) \\
+        & = \left( 2\pi \right)^{-\frac{1}{2}} \cdot \left( s^2 \right)^{-\frac{1}{2}} \cdot \exp \left( -\frac{1}{2} \cdot \frac{m^2}{s^2} \right) \cdot \exp \left( \transpose{\left( \frac{m}{s^2} \cdot \bs{x}\right)} \bs{w} -\frac{1}{2} \cdot \transpose{\bs{w}} \left( \frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}} \right) \bs{w} \right) \,,
+    \end{align*}
+    where we used the fact that $\transpose{\bs{w}}\bs{x} = \transpose{\bs{x}}\bs{w}$ repeatedly in the second line. Setting $\bs{\tau} = \frac{m}{s^2} \cdot \bs{x}$ and $\bs{P} = \frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}}$ all that remains to be shown is that the $\transpose{\bs{\tau}}\bs{P}^{-1}\bs{\tau} = \frac{m^2}{s^2}$ when using the pseudo-inverse to match the terms with the Gaussian density in \eqref{eq:Gauss_definition}. To this end, note that the pseudo-inverse\footnote{It is easy to verify this because 
+    \begin{align*}
+        \bs{P}\bs{P}^+\bs{P} & = \frac{1}{s^4} \cdot s^2 \cdot (\transpose{\bs{x}}\bs{x})^{-2} \cdot \bs{x}\transpose{\bs{x}}\bs{x}\transpose{\bs{x}}\bs{x}\transpose{\bs{x}} = \frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}} = \bs{P} \\
+        \bs{P}^+\bs{P}\bs{P}^+ & = \frac{1}{s^2} \cdot s^4 \cdot (\transpose{\bs{x}}\bs{x})^{-4} \cdot \bs{x}\transpose{\bs{x}}\bs{x}\transpose{\bs{x}}\bs{x}\transpose{\bs{x}} = \bs{x}\transpose{\bs{x}} = s^2 \cdot (\transpose{\bs{x}}\bs{x})^{-2} \cdot \bs{x}\transpose{\bs{x}} = \bs{P}^+ \,.
+    \end{align*}
+    } of $\bs{P} = \frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}}$ equals $\bs{P}^+ = s^2 \cdot (\transpose{\bs{x}}\bs{x})^{-2} \cdot \bs{x}\transpose{\bs{x}}$. Thus, we have
+    \begin{align*}
+        \transpose{\bs{\tau}}\bs{P}^+\bs{\tau} 
+        & = \frac{m^2}{s^4} \cdot s^2 \cdot (\transpose{\bs{x}}\bs{x})^{-2} \transpose{\bs{x}} \cdot \bs{x}\transpose{\bs{x}}\bs{x} = \frac{m^2}{s^2} \,.
+    \end{align*}
+    Finally note that the pseudo-determinant of $\bs{P}^+$ equals $s^2 \cdot \transpose{\bs{x}}\bs{x}$ and thus the only missing term in the message is $(\transpose{\bs{x}}\bs{x})^{-\frac{1}{2}}$.
+\end{proof}
+
+\subsection*{Factor Normalization}
+The normalization constant $Z_{f}$ for the weighted sum factor is given by
+\begin{align}
+    Z_{f} & = \frac{1}{\Normal{\bs{\mu}}{\frac{m}{\transpose{\bs{x}}\bs{x}} \bs{x}}{\bs{\Sigma} + \left(\frac{s}{\transpose{\bs{x}}\bs{x}}\right)^2 \bs{x}\transpose{\bs{x}}}} \,.
+\end{align}
+
+\begin{proof}
+    Using \eqref{eq:partition_factor_message}, $Z_{f}$ is given by
+    \begin{align*}
+        Z_{f} & = \frac{\int_{-\infty}^{+\infty} \int_{\Real^n} \dirac{t - \transpose{\bs{w}}\bs{x}} \cdot \Normal{\bs{w}}{\bs{\mu}}{\bs{\Sigma}} \cdot \Normal{t}{m}{s^2} \intd{\bs{w}}\intd{t}}{\left( \int_{\Real^n} m_{f\rightarrow \bs{W}} (\bs{w}) \cdot \Normal{\bs{w}}{\bs{\mu}}{\bs{\Sigma}} \intd{\bs{w}} \right) \cdot \left( \int_{-\infty}^{+\infty} m_{f\rightarrow T} (t) \cdot \Normal{t}{m}{s^2} \intd{t} \right)} \\
+        & = \frac{\int_{-\infty}^{+\infty} \Normal{t}{\transpose{\bs{\mu}}\bs{x}}{\transpose{\bs{x}}\bs{\Sigma}\bs{x}} \cdot \Normal{t}{m}{s^2} \intd{t}}{\left( \int_{\Real^n} \Gauss{\bs{w}}{\frac{m}{s^2} \cdot \bs{x}}{\frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}}} (\bs{w}) \cdot \Normal{\bs{w}}{\bs{\mu}}{\bs{\Sigma}} \intd{\bs{w}} \right) \cdot \left( \int_{-\infty}^{+\infty} \Normal{t}{\transpose{\bs{\mu}}\bs{x}}{\transpose{\bs{x}}\bs{\Sigma}\bs{x}} \cdot \Normal{t}{m}{s^2} \intd{t} \right)} \\ 
+        & = \frac{1}{\int_{\Real^n} \Gauss{\bs{w}}{\frac{m}{s^2} \cdot \bs{x}}{\frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}}} (\bs{w}) \cdot \Gauss{\bs{w}}{\bs{\Sigma}^{-1} \bs{\mu}}{\bs{\Sigma}^{-1}} \intd{\bs{w}}} \,,
+    \end{align*}
+    where we used \eqref{eq:msg_from_f_to_t_gaussian_projection_factor} and \eqref{eq:msg_from_f_to_w_gaussian_projection_factor} in the second line. All that remains to be shown is that 
+    \begin{align*}
+        \int_{\Real^n} \Gauss{\bs{w}}{\frac{m}{s^2} \cdot \bs{x}}{\frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}}} (\bs{w}) \cdot \Gauss{\bs{w}}{\bs{\Sigma}^{-1} \bs{\mu}}{\bs{\Sigma}^{-1}} \intd{\bs{w}} & = \Normal{\bs{\mu}}{\frac{m}{\transpose{\bs{x}}\bs{x}} \bs{x}}{\bs{\Sigma} + \left(\frac{s}{\transpose{\bs{x}}\bs{x}}\right)^2 \bs{x}\transpose{\bs{x}}} \,,
+    \end{align*}
+    where we used the pseudo-inverse of $\bs{P}$ and Theorem \ref{thm:gaussian_multiplication}.
+\end{proof}
+
+\subsection*{Relation to Weighted Sum Factor}
+In a previous section we have introduced the weighted sum factor which, for two variables $W_1$ and $W_2$ and associated linear coefficients $x_1$ and $x_2$ is defined by 
+\begin{align*}
+    f(\bs{w},t) & = \dirac{t - w_1 \cdot x_1 - w_2 \cdot x_2} = \dirac{t - \transpose{\bs{w}}\bs{x}} \,.
+\end{align*}
+This factor is identical to \eqref{eq:gaussian_projection_factor}. However, if we compare both factors, the difference is that in the case of the Gaussian projection factor \eqref{eq:gaussian_projection_factor}, $\bs{W}$ has a multi-dimensional distribution whereas in the case of the weighted sum factor, there are no parameters for correlations between $W_1$ and $W_2$, i.e.,
+\begin{align}
+    \bs{\Sigma} & = \left[ \begin{array}{cc} \sigma_1^2 & 0 \\ 0 & \sigma_2^2 \end{array} \right] \label{eq:diagonal_covariance} \,.
+\end{align}
+For the weighted sum factor, we have the following message equations for the variables $W_1$, $W_2$ and $T$:
+\begin{align}
+    m_{f \to W_1}(w_1) & = \Normal{w_1}{\frac{m - x_2 \mu_2}{x_1}}{\frac{s^2 + x_2^2 \sigma_2^2}{x_1^2}} \label{eq:msg_from_f_to_w1_weighted_sum_factor} \\
+    m_{f \to W_2}(w_2) & = \Normal{w_2}{\frac{m - x_1 \mu_1}{x_2}}{\frac{s^2 + x_1^2 \sigma_1^2}{x_2^2}} \label{eq:msg_from_f_to_w2_weighted_sum_factor} \\
+    m_{f \to T}(t) & = \Normal{t}{x_1 \mu_1 + x_2 \mu_2}{x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2} \label{eq:msg_from_f_to_t_weighted_sum_factor}
+\end{align}
+We see right away that \eqref{eq:msg_from_f_to_t_weighted_sum_factor} equals \eqref{eq:msg_from_f_to_t_gaussian_projection_factor} when using \eqref{eq:diagonal_covariance} for $\bs{\Sigma}$. In order to show the equivalence of the messages from $f$ to $W_1$ and $W_2$, we recall \eqref{eq:marginal_factor} and show that the normalized $p_{W_1}(w_1)$ and $p_{W_2}(w_2)$ are identical whether we use (a) the Gaussian projection factor message update \eqref{eq:msg_from_f_to_w_gaussian_projection_factor} together with \eqref{eq:diagonal_covariance} for $\bs{\Sigma}$, or (b)  \eqref{eq:msg_from_f_to_w1_weighted_sum_factor} and \eqref{eq:msg_from_f_to_w2_weighted_sum_factor} directly.
+
+\paragraph{Marginal using Weighted Sum Factor Updates} Let us start with the normalized marginals $p_{W_1}(w_1$ and $p_{W_2}(w_2)$ when using \eqref{eq:msg_from_f_to_w1_weighted_sum_factor} and \eqref{eq:msg_from_f_to_w2_weighted_sum_factor}. Using the Gaussian multiplication theorem, we have
+\begin{align}
+    p_{W_1}(w_1) & = m_{W_1 \to f}(w_1) \cdot m_{f \to W_1}(w_1) \nonumber \\
+    & = \Gauss{w_1}{\frac{\mu_1}{\sigma_1^2}}{\frac{1}{\sigma_1^2}} \cdot \Gauss{w_1}{\frac{x_1^2}{s^2 + x_2^2 \sigma_2^2} \cdot \frac{m - x_2 \mu_2}{x_1}}{\frac{x_1^2}{s^2 + x_2^2 \sigma_2^2}} \nonumber \\
+    & \propto \ \ \Gauss{w_1}{\frac{\mu_1}{\sigma_1^2} + \frac{x_1 \cdot \left( m - x_2 \mu_2 \right)}{s^2 + x_2^2 \sigma_2^2}}{\frac{1}{\sigma_1^2} + \frac{x_1^2}{s^2 + x_2^2 \sigma_2^2}} \nonumber \\
+    & = \Gauss{w_1}{\frac{\mu_1 \cdot \left( s^2 + x_2^2 \sigma_2^2 \right) + x_1 \sigma_1^2 \cdot \left( m - x_2 \mu_2 \right)}{\sigma_1^2 \cdot \left( s^2 + x_2^2 \sigma_2^2 \right)}}{\frac{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}{\sigma_1^2 \cdot \left( s^2 + x_2^2 \sigma_2^2 \right)}} \nonumber \\
+    & = \Normal{w_1}{\frac{\mu_1 \cdot \left( s^2 + x_2^2 \sigma_2^2 \right) + x_1 \sigma_1^2 \cdot \left( m - x_2 \mu_2 \right)}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}}{\frac{\sigma_1^2 \cdot \left( s^2 + x_2^2 \sigma_2^2 \right)}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}} \label{eq:p_w1_weighted_sum_factor} \\
+    p_{W_2}(w_2) & = m_{W_2 \to f}(w_2) \cdot m_{f \to W_2}(w_2) \nonumber \\
+    & = \Normal{w_2}{\frac{\mu_2 \cdot \left( s^2 + x_1^2 \sigma_1^2 \right) + x_2 \sigma_2^2 \cdot \left( m - x_1 \mu_1 \right)}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}}{\frac{\sigma_2^2 \cdot \left( s^2 + x_1^2 \sigma_1^2 \right)}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}} \label{eq:p_w2_weighted_sum_factor}
+\end{align}
+
+\paragraph{Marginal using Gaussian Projection Factor Updates} In comparison, let us now derive the normalized marginals $p_{W_1}(w_1$ and $p_{W_2}(w_2)$ using the Gaussian projection factor message \eqref{eq:msg_from_f_to_w_gaussian_projection_factor}. Again, using the Gaussian multiplication theorem, we have
+\begin{align*}
+    p_{\bs{W}}(\bs{w}) & = m_{\bs{W} \to f}(\bs{w}) \cdot m_{f \to \bs{W}}(\bs{w}) \\
+    & = \Gauss{\bs{w}}{\bs{\Sigma}^{-1} \bs{\mu}}{\bs{\Sigma}^{-1}} \cdot \Gauss{\bs{w}}{\frac{m}{s^2} \cdot \bs{x}}{\frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}}} \\
+    & \propto \ \ \Gauss{\bs{w}}{\bs{\Sigma}^{-1} \bs{\mu} + \frac{m}{s^2} \cdot \bs{x}}{\bs{\Sigma}^{-1} + \frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}}} \,.
+\end{align*}
+Using the Sherman-Morrison formula, we can simplify inverse of the precision matrix as follows
+\begin{align*}
+    \left( \bs{\Sigma}^{-1} + \frac{1}{s^2} \cdot \bs{x}\transpose{\bs{x}} \right)^{-1} 
+    & = \bs{\Sigma} - \frac{\frac{1}{s^2} \cdot \bs{\Sigma}\bs{x}\transpose{\bs{x}}\bs{\Sigma}}{1 + \frac{1}{s^2} \cdot \transpose{\bs{x}} \bs{\Sigma} \bs{x}} 
+    = \bs{\Sigma} - \frac{\bs{\Sigma}\bs{x} \transpose{\left( \bs{\Sigma}\bs{x} \right)}}{s^2 + \transpose{\bs{x}} \bs{\Sigma} \bs{x}} \,.
+\end{align*}
+Hence, we have for the normalized marginal $p_{\bs{W}}(\bs{w})$
+\begin{align*}
+    p_{\bs{W}}(\bs{w}) 
+    & \propto \ \ \Normal{\bs{w}}{\bs{\mu} + \frac{m}{s^2} \cdot \bs{\Sigma}\bs{x} - \frac{\bs{\Sigma}\bs{x}\transpose{\bs{x}}\bs{\mu} + \frac{m}{s^2} \cdot \bs{\Sigma}\bs{x}\transpose{\bs{x}}\bs{\Sigma}\bs{x}}{s^2 + \transpose{\bs{x}} \bs{\Sigma} \bs{x}}}{\bs{\Sigma} - \frac{\bs{\Sigma}\bs{x} \transpose{\left( \bs{\Sigma}\bs{x} \right)}}{s^2 + \transpose{\bs{x}} \bs{\Sigma} \bs{x}}} \\
+    & = \Normal{\bs{w}}{\bs{\mu} + \bs{\Sigma}\bs{x} \cdot \left( \frac{m}{s^2} - \frac{\transpose{\bs{x}}\bs{\mu} + \frac{m}{s^2} \cdot \transpose{\bs{x}}\bs{\Sigma}\bs{x}}{s^2 + \transpose{\bs{x}} \bs{\Sigma} \bs{x}} \right)}{\bs{\Sigma} - \frac{\bs{\Sigma}\bs{x} \transpose{\left( \bs{\Sigma}\bs{x} \right)}}{s^2 + \transpose{\bs{x}} \bs{\Sigma} \bs{x}}} \\
+    & = \Normal{\bs{w}}{\bs{\mu} + \bs{\Sigma}\bs{x} \cdot \left( \frac{m \cdot s^2 + m \cdot \transpose{\bs{x}} \bs{\Sigma} \bs{x} - s^2 \cdot \transpose{\bs{x}}\bs{\mu} - m \cdot \transpose{\bs{x}}\bs{\Sigma}\bs{x}}{s^2 \cdot \left( s^2 + \transpose{\bs{x}} \bs{\Sigma} \bs{x} \right)} \right)}{\bs{\Sigma} - \frac{\bs{\Sigma}\bs{x} \transpose{\left( \bs{\Sigma}\bs{x} \right)}}{s^2 + \transpose{\bs{x}} \bs{\Sigma} \bs{x}}} \\
+    & = \Normal{\bs{w}}{\bs{\mu} + \bs{\Sigma}\bs{x} \cdot \left( \frac{m - \transpose{\bs{x}}\bs{\mu}}{s^2 + \transpose{\bs{x}} \bs{\Sigma} \bs{x}} \right)}{\bs{\Sigma} - \frac{\bs{\Sigma}\bs{x} \transpose{\left( \bs{\Sigma}\bs{x} \right)}}{s^2 + \transpose{\bs{x}} \bs{\Sigma} \bs{x}}} \,.
+\end{align*}
+Noticing that $\transpose{\bs{x}} \bs{\Sigma} \bs{x} = x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2$, $\transpose{\bs{x}}\bs{\mu} = x_1 \mu_1 + x_2 \mu_2$ and $\bs{\Sigma}\bs{x} = \left[ \begin{array}{c} x_1 \sigma_1^2 \\ x_2 \sigma_2^2 \end{array}\right]$ using $\bs{\Sigma}$ as given in \eqref{eq:diagonal_covariance} we see 
+\begin{align}
+    p_{W_1}(w_1) & = \Normal{w_1}{\mu_1 + \frac{x_1 \sigma_1^2 \cdot \left( m - x_1 \mu_1 - x_2 \mu_2 \right)}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}}{\sigma_1^2 - \frac{x_1^2 \sigma_1^4}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}} \nonumber \\
+    & = \Normal{w_1}{\frac{\mu_1 \cdot \left( s^2 +  x_2^2 \sigma_2^2 \right) + x_1 \sigma_1^2 \cdot \left( m - x_2 \mu_2 \right)}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}}{\frac{\sigma_1^2 \cdot \left( s^2 + x_2^2 \sigma_2^2 \right)}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}} \label{eq:p_w1_gaussian_projection_factor} \\
+    p_{W_2}(w_2) & = \Normal{w_2}{\mu_2 + \frac{x_2 \sigma_2^2 \cdot \left( m - x_1 \mu_1 - x_2 \mu_2 \right)}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}}{\sigma_2^2 - \frac{x_2^2 \sigma_2^4}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}} \nonumber \\
+    & = \Normal{w_2}{\frac{\mu_2 \cdot \left( s^2 + x_1^2 \sigma_1^2 \right) + x_2 \sigma_2^2 \cdot \left( m - x_1 \mu_1 \right)}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}}{\frac{\sigma_2^2 \cdot \left( s^2 + x_1^2 \sigma_1^2  \right)}{s^2 + x_1^2 \sigma_1^2 + x_2^2 \sigma_2^2}} \label{eq:p_w2_gaussian_projection_factor} \,.
+\end{align}
+
+Comparing \eqref{eq:p_w1_weighted_sum_factor} and \eqref{eq:p_w1_gaussian_projection_factor} as well as \eqref{eq:p_w2_weighted_sum_factor} and \eqref{eq:p_w2_gaussian_projection_factor} we see that both marginals are identical and thus the two factors are identical with respect to the marginals $p_{W_1}(\cdot)$, $p_{W_2}(\cdot)$ as well as $p_T(\cdot)$.
+
+\end{document}
